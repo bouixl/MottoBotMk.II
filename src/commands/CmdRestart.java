@@ -15,10 +15,11 @@ public class CmdRestart extends Command {
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		try {
 			bot.shutdown();
-			ProcessBuilder pb = new ProcessBuilder("java","-jar","MottoBot.jar",bot.getToken(),"10");
+			ProcessBuilder pb = new ProcessBuilder("java", "-jar", "MottoBot.jar", bot.getToken(), "10");
 			pb.inheritIO();
 			pb.start();
-		} catch (IOException e1) {
+		}
+		catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}

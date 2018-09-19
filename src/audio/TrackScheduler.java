@@ -20,11 +20,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  * tracks.
  */
 public class TrackScheduler extends AudioEventAdapter {
+
 	private static final int MAX_PLAYLIST_SIZE = 100;
 
-	private final AudioPlayer player;
-	private final BlockingQueue<AudioTrack> queue;
-	private TextChannel activeTextChannel;
+	private final AudioPlayer				player;
+	private final BlockingQueue<AudioTrack>	queue;
+	private TextChannel						activeTextChannel;
 
 	/**
 	 * @param player
@@ -42,33 +43,37 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	public synchronized void queue(AudioTrack track, TextChannel textChannel) {
 		if (!this.player.startTrack(track, true)) {
-			if(!this.queue.offer(track)) {
+			if (!this.queue.offer(track)) {
 				textChannel.sendMessage(":x: Ma playlist est trop remplie !").queue();
 				return;
 			}
-			textChannel.sendMessage(":musical_score: \""+track.getInfo().title+"\" ajouté à la file d'attente.").queue();
+			textChannel.sendMessage(":musical_score: \"" + track.getInfo().title + "\" ajouté à la file d'attente.")
+					.queue();
 		}
 	}
 
 	public synchronized void queuePlayList(AudioPlaylist playlist, TextChannel textChannel) {
 		List<AudioTrack> list = playlist.getTracks();
-		if(list.size()==0) return;
+		if (list.size() == 0)
+			return;
 
-		if (!this.player.startTrack(list.get(0), true))
-		{
-			if(!this.queue.offer(list.get(0))) {
+		if (!this.player.startTrack(list.get(0), true)) {
+			if (!this.queue.offer(list.get(0))) {
 				textChannel.sendMessage(":x: Ma playlist est trop remplie !").queue();
 				return;
 			}
 		}
-		for(int i = 1; i<list.size(); i++)
-		{
-			if(!this.queue.offer(list.get(i))) {
-				textChannel.sendMessage(":x: Ma playlist est trop remplie(mais j'ai peut-être réussi à ajouter quelques titres) !").queue();
+		for (int i = 1; i < list.size(); i++) {
+			if (!this.queue.offer(list.get(i))) {
+				textChannel
+						.sendMessage(
+								":x: Ma playlist est trop remplie(mais j'ai peut-être réussi à ajouter quelques titres) !")
+						.queue();
 				return;
 			}
 		}
-		textChannel.sendMessage(":musical_score: Playlist \""+playlist.getName()+"\" ajoutée à la file d'attente.").queue();
+		textChannel.sendMessage(":musical_score: Playlist \"" + playlist.getName() + "\" ajoutée à la file d'attente.")
+				.queue();
 	}
 
 	public synchronized void nextTrack() {
@@ -80,23 +85,20 @@ public class TrackScheduler extends AudioEventAdapter {
 		this.player.startTrack(this.queue.poll(), false);
 	}
 
-	public synchronized void shufflePlaylist()
-	{
-		ArrayList<AudioTrack> tempPlaylist = new ArrayList<AudioTrack>();
+	public synchronized void shufflePlaylist() {
+		ArrayList<AudioTrack> tempPlaylist = new ArrayList<>();
 		AudioTrack tmp = null;
-		while((tmp = this.queue.poll())!=null)
-		{
+		while ((tmp = this.queue.poll()) != null) {
 			tempPlaylist.add(tmp);
 		}
 		Collections.shuffle(tempPlaylist);
-		for(AudioTrack a : tempPlaylist)
-		{
+		for (AudioTrack a : tempPlaylist) {
 			this.queue.offer(a);
 		}
 	}
 
 	public synchronized List<String> getPlaylist() {
-		ArrayList<String> titles = new ArrayList<String>();
+		ArrayList<String> titles = new ArrayList<>();
 		this.queue.stream().forEach(a -> titles.add(a.getInfo().title));
 		return titles;
 	}
@@ -113,9 +115,11 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
-		String ytURL = (track.getSourceManager().getSourceName().equals("youtube"))?" (<"+track.getInfo().uri+">)":"";
+		String ytURL = (track.getSourceManager().getSourceName().equals("youtube")) ? " (<" + track.getInfo().uri + ">)"
+				: "";
 
-		this.activeTextChannel.sendMessage(":musical_note: Joue maintenant: \""+track.getInfo().title+"\""+ytURL).queue();
+		this.activeTextChannel.sendMessage(":musical_note: Joue maintenant: \"" + track.getInfo().title + "\"" + ytURL)
+				.queue();
 	}
 
 	@Override
@@ -129,12 +133,13 @@ public class TrackScheduler extends AudioEventAdapter {
 		// endReason == STOPPED: The player was stopped.
 		// endReason == REPLACED: Another track started playing while this had not finished
 		// endReason == CLEANUP: Player hasn't been queried for a while, if you want you can put a
-		//	                       clone of this back to your queue
+		// clone of this back to your queue
 	}
 
 	@Override
 	public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-		// An already playing track threw an exception (track end event will still be received separately)
+		// An already playing track threw an exception (track end event will still be received
+		// separately)
 	}
 
 	@Override

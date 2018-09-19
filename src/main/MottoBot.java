@@ -35,27 +35,29 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import utils.CommonIDs;
 
 public class MottoBot extends ListenerAdapter {
+
 	public static final String MOTTO_VERSION = "180918-1";
 
 	public static MottoBot INSTANCE;
 
-	public JDA jda;
-	private String token;
-	private final Instant startTime;
-	private final CommandClient commandClient;
-	private final AudioPlayerManager playerManager;
-	private final Map<Long, GuildMusicManager> musicManagers;
-	private final EventWaiter waiter;
+	public JDA									jda;
+	private String								token;
+	private final Instant						startTime;
+	private final CommandClient					commandClient;
+	private final AudioPlayerManager			playerManager;
+	private final Map<Long, GuildMusicManager>	musicManagers;
+	private final EventWaiter					waiter;
 
 	public static void main(String[] args) {
 		if (args.length < 1)
 			throw new IllegalArgumentException("Il faut un token d'authentification !");
 
-		if(args.length>1) {
+		if (args.length > 1) {
 			int sec;
 			try {
 				sec = Integer.parseInt(args[1]);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				sec = 10;
 				e.printStackTrace();
 			}
@@ -63,8 +65,9 @@ public class MottoBot extends ListenerAdapter {
 			System.out.println("Lancement dans " + sec + " secondes.");
 
 			try {
-				Thread.sleep(1000*sec);
-			} catch (Exception e) {
+				Thread.sleep(1000 * sec);
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 
@@ -83,7 +86,7 @@ public class MottoBot extends ListenerAdapter {
 
 		this.playerManager = new DefaultAudioPlayerManager();
 		AudioSourceManagers.registerRemoteSources(this.playerManager);
-		this.musicManagers =  new HashMap<Long, GuildMusicManager>();
+		this.musicManagers = new HashMap<>();
 
 		JDABuilder builder = new JDABuilder(AccountType.BOT);
 		builder.setToken(token);
@@ -96,15 +99,16 @@ public class MottoBot extends ListenerAdapter {
 
 		try {
 			this.jda = builder.build().awaitReady();
-		} catch (LoginException | InterruptedException e) {
+		}
+		catch (LoginException | InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		System.out.println(timestamp()+"Connecté en tant que \""+this.jda.getSelfUser().getName()+"\"");
+		System.out.println(timestamp() + "Connecté en tant que \"" + this.jda.getSelfUser().getName() + "\"");
 		int nbServeurs = this.jda.getGuilds().size();
 		System.out.println("Le bot est autorisé sur " + nbServeurs + " serveur" + (nbServeurs > 1 ? "s" : ""));
-		for(Guild g:this.jda.getGuilds()) {
-			System.out.println("\t"+g.getName()+" - "+g.getId());
+		for (Guild g : this.jda.getGuilds()) {
+			System.out.println("\t" + g.getName() + " - " + g.getId());
 		}
 
 		this.setDefaultPresence();
@@ -114,7 +118,7 @@ public class MottoBot extends ListenerAdapter {
 
 	public synchronized GuildMusicManager getGuildMusicManager(long gID) {
 		GuildMusicManager gmm = null;
-		if ((gmm = this.musicManagers.get(gID))==null) {
+		if ((gmm = this.musicManagers.get(gID)) == null) {
 			gmm = new GuildMusicManager(this.playerManager);
 			this.musicManagers.put(gID, gmm);
 
@@ -124,81 +128,95 @@ public class MottoBot extends ListenerAdapter {
 		return gmm;
 	}
 
-    public void shutdown()
-    {
-        this.jda.getGuilds().stream().forEach(g ->
-        {
-            g.getAudioManager().closeAudioConnection();
-            GuildMusicManager m = this.musicManagers.get(g.getIdLong());
-            if(m!=null) {
-            	m.scheduler.clearPlaylist();
-            	m.player.destroy();
-            }
-        });
-        this.playerManager.shutdown();
-        this.jda.shutdown();
-    }
+	public void shutdown() {
+		this.jda.getGuilds().stream().forEach(g -> {
+			g.getAudioManager().closeAudioConnection();
+			GuildMusicManager m = this.musicManagers.get(g.getIdLong());
+			if (m != null) {
+				m.scheduler.clearPlaylist();
+				m.player.destroy();
+			}
+		});
+		this.playerManager.shutdown();
+		this.jda.shutdown();
+	}
 
-    private void registerTriggers() {
+	private void registerTriggers() {
 		// TODO
 	}
 
 	private void registerCommands() {
-		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
-		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart")
+				.addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR)
+				.addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 
 		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
 		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
-		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
-		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
-		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
+		this.commandClient
+				.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
+		this.commandClient
+				.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
+		this.commandClient
+				.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
 
 		this.commandClient.addCommand(new CmdVersion("version").addAlias("mversion"));
 
 		this.commandClient.addCommand(new CmdTestArgs("test"));
 	}
 
+	@Override
 	public void onReady(ReadyEvent event) {
-    	System.out.println(timestamp()+"Prêt !");
-    }
-
-    public void setDefaultPresence() {
-    	this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX+"help"), true);
-    }
-
-    public void onGuildJoin(GuildJoinEvent event) {
-    	System.out.println(timestamp()+"J'ai rejoint la guilde \""+event.getGuild().getName()+"\" ["+event.getGuild().getId()+"].");
-    }
-
-	public void onDisconnect(DisconnectEvent event) {
-    	System.err.println(event.getDisconnectTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE))+"\tDéconnecté ! Tentative de reconnection...");
-    }
-
-    public void onResume(ResumedEvent event) {
-    	System.err.println(timestamp()+"Connection rétablie ! Aucun event perdu.");
-    }
-
-    public void onReconnect(ReconnectedEvent event) {
-    	System.err.println(timestamp()+"Reconnecté ! Peut-être que certains events n'ont pas été traités...");
-    }
-
-    public void onShutdown(ShutdownEvent event) {
-    	System.out.println(timestamp()+"Déconnecté ! Extinction...");
-    }
-
-	public static String timestamp() {
-		return OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE))+"\t";
+		System.out.println(timestamp() + "Prêt !");
 	}
 
-    @SuppressWarnings("unused")
+	public void setDefaultPresence() {
+		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX + "help"),
+				true);
+	}
+
+	@Override
+	public void onGuildJoin(GuildJoinEvent event) {
+		System.out.println(timestamp() + "J'ai rejoint la guilde \"" + event.getGuild().getName() + "\" ["
+				+ event.getGuild().getId() + "].");
+	}
+
+	@Override
+	public void onDisconnect(DisconnectEvent event) {
+		System.err.println(
+				event.getDisconnectTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE))
+						+ "\tDéconnecté ! Tentative de reconnection...");
+	}
+
+	@Override
+	public void onResume(ResumedEvent event) {
+		System.err.println(timestamp() + "Connection rétablie ! Aucun event perdu.");
+	}
+
+	@Override
+	public void onReconnect(ReconnectedEvent event) {
+		System.err.println(timestamp() + "Reconnecté ! Peut-être que certains events n'ont pas été traités...");
+	}
+
+	@Override
+	public void onShutdown(ShutdownEvent event) {
+		System.out.println(timestamp() + "Déconnecté ! Extinction...");
+	}
+
+	public static String timestamp() {
+		return OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE))
+				+ "\t";
+	}
+
+	@SuppressWarnings("unused")
 	private static String authorString(MessageReceivedEvent e) {
 		String res = "";
 		res += e.getMember().getEffectiveName();
-		res += "["+e.getAuthor().getId()+"]";
-		if(e.isFromType(ChannelType.TEXT)) {
-			res += "@["+e.getGuild().getId()+"]";
+		res += "[" + e.getAuthor().getId() + "]";
+		if (e.isFromType(ChannelType.TEXT)) {
+			res += "@[" + e.getGuild().getId() + "]";
 		}
-		else if(e.isFromType(ChannelType.PRIVATE)) {
+		else if (e.isFromType(ChannelType.PRIVATE)) {
 			res += "@PRIVATE";
 		}
 		return res;

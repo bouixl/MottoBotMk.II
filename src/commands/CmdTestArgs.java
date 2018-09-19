@@ -11,7 +11,7 @@ public class CmdTestArgs extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		event.getChannel().sendMessage("+"+args+"+").queue();
+		event.getChannel().sendMessage("+" + args + "+").queue();
 	}
 
 }

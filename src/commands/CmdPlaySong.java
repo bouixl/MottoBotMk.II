@@ -20,10 +20,11 @@ public class CmdPlaySong extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if(args==null) return;
+		if (args == null)
+			return;
 
 		VoiceChannel voiceChannel = event.getMember().getVoiceState().getChannel();
-		if(voiceChannel==null) {
+		if (voiceChannel == null) {
 			event.getChannel().sendMessage(":x: Vous devez être dans un canal vocal pour ça.").queue();
 			return;
 		}
@@ -37,6 +38,7 @@ public class CmdPlaySong extends Command {
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild().getIdLong());
 		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
 		bot.getPlayerManager().loadItemOrdered(gmm.player, args, new AudioLoadResultHandler() {
+
 			@Override
 			public void trackLoaded(AudioTrack track) {
 				gmm.scheduler.queue(track, event.getTextChannel());
@@ -44,7 +46,7 @@ public class CmdPlaySong extends Command {
 
 			@Override
 			public void playlistLoaded(AudioPlaylist playlist) {
-				if(args.startsWith("ytsearch:")) {
+				if (args.startsWith("ytsearch:")) {
 					// On récupère un seul résultat de recherche
 					gmm.scheduler.queue(playlist.getTracks().get(0), event.getTextChannel());
 				}
@@ -55,9 +57,10 @@ public class CmdPlaySong extends Command {
 
 			@Override
 			public void noMatches() {
-				//event.getChannel().sendMessage(":x: Musique introuvable.").queue();
+				// event.getChannel().sendMessage(":x: Musique introuvable.").queue();
 				// On tente une recherche
-				bot.getPlayerManager().loadItemOrdered(gmm.player, "ytsearch:"+args, new AudioLoadResultHandler() {
+				bot.getPlayerManager().loadItemOrdered(gmm.player, "ytsearch:" + args, new AudioLoadResultHandler() {
+
 					@Override
 					public void trackLoaded(AudioTrack track) {
 						gmm.scheduler.queue(track, event.getTextChannel());
@@ -75,7 +78,7 @@ public class CmdPlaySong extends Command {
 
 					@Override
 					public void loadFailed(FriendlyException throwable) {
-						if(throwable.severity==Severity.COMMON) {
+						if (throwable.severity == Severity.COMMON) {
 							event.getChannel().sendMessage(":x: Musique non disponible.").queue();
 						}
 						else {
@@ -87,7 +90,7 @@ public class CmdPlaySong extends Command {
 
 			@Override
 			public void loadFailed(FriendlyException throwable) {
-				if(throwable.severity==Severity.COMMON) {
+				if (throwable.severity == Severity.COMMON) {
 					event.getChannel().sendMessage(":x: Musique non disponible.").queue();
 				}
 				else {

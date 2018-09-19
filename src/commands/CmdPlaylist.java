@@ -19,7 +19,7 @@ public class CmdPlaylist extends Command {
 		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
-		if(titles.length>0) {
+		if (titles.length > 0) {
 			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
 			pgBuilder.setText(":musical_score: Playlist: ");
 			pgBuilder.useNumberedItems(true);

@@ -15,7 +15,7 @@ public class CmdShufflePlaylist extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if(!event.getMember().getVoiceState().inVoiceChannel()) {
+		if (!event.getMember().getVoiceState().inVoiceChannel()) {
 			event.getChannel().sendMessage(":x: Vous devez être dans un canal vocal pour ça.").queue();
 			return;
 		}
@@ -26,7 +26,7 @@ public class CmdShufflePlaylist extends Command {
 
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
-		if(titles.length>0) {
+		if (titles.length > 0) {
 			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
 			pgBuilder.setText(":musical_score: Nouvelle playlist: ");
 			pgBuilder.useNumberedItems(true);

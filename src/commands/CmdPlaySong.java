@@ -49,7 +49,34 @@ public class CmdPlaySong extends Command {
 
 			@Override
 			public void noMatches() {
-				event.getChannel().sendMessage(":x: Musique introuvable.").queue();
+				//event.getChannel().sendMessage(":x: Musique introuvable.").queue();
+				// On tente une recherche
+				bot.getPlayerManager().loadItemOrdered(gmm.player, "ytsearch:"+args, new AudioLoadResultHandler() {
+					@Override
+					public void trackLoaded(AudioTrack track) {
+						gmm.scheduler.queue(track, event.getTextChannel());
+					}
+
+					@Override
+					public void playlistLoaded(AudioPlaylist playlist) {
+						gmm.scheduler.queuePlayList(playlist, event.getTextChannel());
+					}
+
+					@Override
+					public void noMatches() {
+						event.getChannel().sendMessage(":x: Musique introuvable.").queue();
+					}
+
+					@Override
+					public void loadFailed(FriendlyException throwable) {
+						if(throwable.severity==Severity.COMMON) {
+							event.getChannel().sendMessage(":x: Musique non disponible.").queue();
+						}
+						else {
+							event.getChannel().sendMessage(":x: Erreur lors du chargement de la musique.").queue();
+						}
+					}
+				});
 			}
 
 			@Override

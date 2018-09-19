@@ -43,9 +43,11 @@ public class TrackScheduler extends AudioEventAdapter {
 	public synchronized void queue(AudioTrack track, TextChannel textChannel) {
 		if (!this.player.startTrack(track, true)) {
 			if(!this.queue.offer(track)) {
-				textChannel.sendMessage(":x: Playlist is full !").queue();
+				textChannel.sendMessage(":x: Ma playlist est trop remplie !").queue();
+				return;
 			}
 		}
+		textChannel.sendMessage(":musical_score: \""+track.getInfo().title+"\" ajouté à la file d'attente.").queue();
 	}
 
 	public synchronized void queuePlayList(AudioPlaylist playlist, TextChannel textChannel) {
@@ -55,15 +57,18 @@ public class TrackScheduler extends AudioEventAdapter {
 		if (!this.player.startTrack(list.get(0), true))
 		{
 			if(!this.queue.offer(list.get(0))) {
-				textChannel.sendMessage(":x: Playlist is full !").queue();
+				textChannel.sendMessage(":x: Ma playlist est trop remplie !").queue();
+				return;
 			}
 		}
 		for(int i = 1; i<list.size(); i++)
 		{
 			if(!this.queue.offer(list.get(i))) {
-				textChannel.sendMessage(":x: Playlist is full(some tracks may have been added though) !").queue();
+				textChannel.sendMessage(":x: Ma playlist est trop remplie(mais j'ai peut-être réussi à ajouter quelques titres) !").queue();
+				return;
 			}
 		}
+		textChannel.sendMessage(":musical_score: Playlist \""+playlist.getName()+"\" ajoutée à la file d'attente.").queue();
 	}
 
 	public synchronized void nextTrack() {
@@ -108,7 +113,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
-		this.activeTextChannel.sendMessage(":musical_note: Joue maintenant: \""+track.getInfo().title+"\"").queue();
+		String ytURL = (track.getSourceManager().getSourceName().equals("youtube"))?" (<"+track.getInfo().uri+">)":"";
+
+		this.activeTextChannel.sendMessage(":musical_note: Joue maintenant: \""+track.getInfo().title+"\""+ytURL).queue();
 	}
 
 	@Override

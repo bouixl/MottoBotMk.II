@@ -44,7 +44,13 @@ public class CmdPlaySong extends Command {
 
 			@Override
 			public void playlistLoaded(AudioPlaylist playlist) {
-				gmm.scheduler.queuePlayList(playlist, event.getTextChannel());
+				if(args.startsWith("ytsearch:")) {
+					// On récupère un seul résultat de recherche
+					gmm.scheduler.queue(playlist.getTracks().get(0), event.getTextChannel());
+				}
+				else {
+					gmm.scheduler.queuePlayList(playlist, event.getTextChannel());
+				}
 			}
 
 			@Override
@@ -59,7 +65,7 @@ public class CmdPlaySong extends Command {
 
 					@Override
 					public void playlistLoaded(AudioPlaylist playlist) {
-						gmm.scheduler.queuePlayList(playlist, event.getTextChannel());
+						gmm.scheduler.queue(playlist.getTracks().get(0), event.getTextChannel());
 					}
 
 					@Override

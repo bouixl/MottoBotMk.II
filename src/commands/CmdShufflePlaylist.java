@@ -2,11 +2,10 @@ package commands;
 
 import java.util.concurrent.TimeUnit;
 
-import com.jagrosh.jdautilities.menu.Paginator;
-
 import audio.GuildMusicManager;
 import main.MottoBot;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import utils.PaginatorAutoStop;
 
 public class CmdShufflePlaylist extends Command {
 
@@ -27,17 +26,22 @@ public class CmdShufflePlaylist extends Command {
 
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
-		Paginator.Builder pgBuilder = new Paginator.Builder();
-		pgBuilder.setText("Nouvelle playlist: ");
-		pgBuilder.useNumberedItems(true);
-		pgBuilder.setItems(titles);
-		pgBuilder.setItemsPerPage(10);
-		pgBuilder.setColumns(1);
-		pgBuilder.setEventWaiter(bot.getWaiter());
-		pgBuilder.setTimeout(90, TimeUnit.SECONDS);
-		pgBuilder.setFinalAction(m -> m.delete().complete());
-		Paginator pg = pgBuilder.build();
+		if(titles.length>0) {
+			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
+			pgBuilder.setText(":musical_score: Nouvelle playlist: ");
+			pgBuilder.useNumberedItems(true);
+			pgBuilder.setItems(titles);
+			pgBuilder.setItemsPerPage(10);
+			pgBuilder.setColumns(1);
+			pgBuilder.setEventWaiter(bot.getWaiter());
+			pgBuilder.setTimeout(90, TimeUnit.SECONDS);
+			pgBuilder.setFinalAction(m -> m.delete().complete());
+			PaginatorAutoStop pg = pgBuilder.build();
 
-		pg.display(event.getChannel());
+			pg.display(event.getChannel());
+		}
+		else {
+			event.getChannel().sendMessage(":musical_score: Playlist vide").queue();
+		}
 	}
 }

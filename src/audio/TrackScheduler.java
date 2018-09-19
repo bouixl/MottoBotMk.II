@@ -46,8 +46,8 @@ public class TrackScheduler extends AudioEventAdapter {
 				textChannel.sendMessage(":x: Ma playlist est trop remplie !").queue();
 				return;
 			}
+			textChannel.sendMessage(":musical_score: \""+track.getInfo().title+"\" ajouté à la file d'attente.").queue();
 		}
-		textChannel.sendMessage(":musical_score: \""+track.getInfo().title+"\" ajouté à la file d'attente.").queue();
 	}
 
 	public synchronized void queuePlayList(AudioPlaylist playlist, TextChannel textChannel) {

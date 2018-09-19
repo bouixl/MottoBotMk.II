@@ -144,12 +144,12 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	private void registerCommands() {
-		this.commandClient.addCommand(new CmdRestart("restart").addAlias("reboot").addAlias("mreboot").addAlias("mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 
-		this.commandClient.addCommand(new CmdPlaySong("play").addAlias("mottoplay").addAlias("mplay").addAlias("mp").setGuildOnly());
-		this.commandClient.addCommand(new CmdSkipSong("skip").addAlias("mottoskip").addAlias("mskip").addAlias("ms").setGuildOnly());
-		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAlias("mottoleave").addAlias("mleave").addAlias("ml").setGuildOnly());
+		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
+		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
+		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
 		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
 		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
 

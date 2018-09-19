@@ -12,10 +12,10 @@ public class CmdRestart extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event, String args) {
+	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		try {
-			MottoBot.INSTANCE.shutdown();
-			ProcessBuilder pb = new ProcessBuilder("java","-jar","MottoBot.jar",MottoBot.INSTANCE.getToken(),"10");
+			bot.shutdown();
+			ProcessBuilder pb = new ProcessBuilder("java","-jar","MottoBot.jar",bot.getToken(),"10");
 			pb.inheritIO();
 			pb.start();
 		} catch (IOException e1) {

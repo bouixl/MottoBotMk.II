@@ -19,7 +19,7 @@ public class CmdPlaySong extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event, String args) {
+	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		if(args==null) return;
 
 		VoiceChannel voiceChannel = event.getMember().getVoiceState().getChannel();
@@ -34,9 +34,9 @@ public class CmdPlaySong extends Command {
 			audioManager.openAudioConnection(voiceChannel);
 
 		// Chargement et lancement de la musique
-		GuildMusicManager gmm = MottoBot.INSTANCE.getGuildMusicManager(event.getGuild().getIdLong());
+		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild().getIdLong());
 		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
-		MottoBot.INSTANCE.getPlayerManager().loadItemOrdered(gmm.player, args, new AudioLoadResultHandler() {
+		bot.getPlayerManager().loadItemOrdered(gmm.player, args, new AudioLoadResultHandler() {
 			@Override
 			public void trackLoaded(AudioTrack track) {
 				gmm.scheduler.queue(track, event.getTextChannel());

@@ -10,8 +10,8 @@ public class CmdShutdown extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event, String args) {
-		MottoBot.INSTANCE.shutdown();
+	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
+		bot.shutdown();
 	}
 
 }

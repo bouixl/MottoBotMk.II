@@ -10,9 +10,9 @@ public class CmdLeaveAudio extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event, String args) {
+	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		event.getChannel().sendMessage("Bye bye!").queue();
-		MottoBot.INSTANCE.getGuildMusicManager(event.getGuild().getIdLong()).scheduler.clearPlaylist();
+		bot.getGuildMusicManager(event.getGuild().getIdLong()).scheduler.clearPlaylist();
 		event.getGuild().getAudioManager().closeAudioConnection();
 	}
 

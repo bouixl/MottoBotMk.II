@@ -78,7 +78,7 @@ public class MottoBot extends ListenerAdapter {
 		this.startTime = Instant.now();
 		this.token = token;
 
-		this.commandClient = new CommandClient();
+		this.commandClient = new CommandClient(this);
 		this.waiter = new EventWaiter();
 
 		this.playerManager = new DefaultAudioPlayerManager();

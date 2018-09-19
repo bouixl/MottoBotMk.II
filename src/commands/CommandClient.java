@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import main.MottoBot;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -12,10 +13,12 @@ public class CommandClient extends ListenerAdapter {
 	public static final String COMMAND_PREFIX = "==";
 	private Pattern commandPattern = Pattern.compile("^"+COMMAND_PREFIX+"([^\\s]+) ?(.*)", Pattern.CASE_INSENSITIVE+Pattern.DOTALL);
 
+	private final MottoBot bot;
     private List<Command> registeredCommands;
     private List<Trigger> registeredTriggers;
 
-    public CommandClient() {
+    public CommandClient(MottoBot mottoBot) {
+    	this.bot = mottoBot;
     	this.registeredCommands = new ArrayList<Command>();
     	this.registeredTriggers = new ArrayList<Trigger>();
     }
@@ -47,7 +50,7 @@ public class CommandClient extends ListenerAdapter {
     		final Command command;
     		command = registeredCommands.stream().filter(cmd -> cmd.getAliases().contains(word)).findAny().orElse(null);
     		if(command != null) {
-            	command.run(event, args);
+            	command.run(bot, event, args);
     		}
         }
         else {
@@ -57,9 +60,9 @@ public class CommandClient extends ListenerAdapter {
 
 	private void lookForTrigger(MessageReceivedEvent event) {
 		final Trigger trigger;
-		trigger = registeredTriggers.stream().filter(trgr -> trgr.tryOn(event)).findAny().orElse(null);
+		trigger = registeredTriggers.stream().filter(trgr -> trgr.tryOn(bot, event)).findAny().orElse(null);
 		if(trigger != null) {
-			trigger.run(event);
+			trigger.run(bot, event);
 		}
 	}
 }

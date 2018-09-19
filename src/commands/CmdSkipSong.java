@@ -10,7 +10,7 @@ public class CmdSkipSong extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event, String args) {
+	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		if(event.getMember().getVoiceState().inVoiceChannel())
 		{
 			int nbOfSkips = 1;
@@ -23,7 +23,7 @@ public class CmdSkipSong extends Command {
 			}
 
 			for(int i=0; i<nbOfSkips; i++) {
-				MottoBot.INSTANCE.getGuildMusicManager(event.getGuild().getIdLong()).scheduler.nextTrack();
+				bot.getGuildMusicManager(event.getGuild().getIdLong()).scheduler.nextTrack();
 			}
 		}
 		else

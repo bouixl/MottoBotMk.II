@@ -10,7 +10,7 @@ public class CmdVersion extends Command {
 	}
 
 	@Override
-	public void execute(MessageReceivedEvent event, String args) {
+	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		event.getChannel().sendMessage("Version: "+MottoBot.MOTTO_VERSION).queue();
 	}
 

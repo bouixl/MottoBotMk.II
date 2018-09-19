@@ -3,6 +3,7 @@ package commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.MottoBot;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -105,7 +106,7 @@ public abstract class Command {
     	return this.aliases;
     }
 
-    public void run(MessageReceivedEvent event, String args) {
+    public void run(MottoBot bot, MessageReceivedEvent event, String args) {
     	if(event.getChannelType()==ChannelType.TEXT) // Guild Message
     	{
 	    	if(this.privateOnly) {
@@ -160,8 +161,8 @@ public abstract class Command {
 		}
 
 		// All checks good, execute the command
-    	this.execute(event, args);
+    	this.execute(bot, event, args);
 	}
 
-    public abstract void execute(MessageReceivedEvent event, String args);
+    public abstract void execute(MottoBot bot, MessageReceivedEvent event, String args);
 }

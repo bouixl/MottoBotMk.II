@@ -3,6 +3,7 @@ package commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.MottoBot;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -75,7 +76,7 @@ public abstract class Trigger {
 		return this;
 	}
 
-    public void run(MessageReceivedEvent event) {
+    public void run(MottoBot bot, MessageReceivedEvent event) {
     	if(event.getChannelType()==ChannelType.TEXT) // Guild Message
     	{
 			if(this.blacklistedGuildIds!=null && this.blacklistedGuildIds.contains(event.getGuild().getId())) {
@@ -109,10 +110,10 @@ public abstract class Trigger {
 		}
 
 		// All checks good, execute the trigger
-    	this.execute(event);
+    	this.execute(bot, event);
 	}
 
-    public abstract void execute(MessageReceivedEvent event);
+    public abstract void execute(MottoBot bot, MessageReceivedEvent event);
 
-	public abstract boolean tryOn(MessageReceivedEvent event);
+	public abstract boolean tryOn(MottoBot bot, MessageReceivedEvent event);
 }

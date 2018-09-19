@@ -26,8 +26,7 @@ public class CmdSkipSong extends Command {
 			}
 		}
 		else {
-			event.getChannel().sendMessage(":x: <@" + event.getAuthor().getId()
-					+ ">, tu dois être dans un channel vocal pour effectuer cette commande.").queue();
+			event.getChannel().sendMessage(":x: <@" + event.getAuthor().getId() + ">, tu dois être dans un channel vocal pour effectuer cette commande.").queue();
 		}
 	}
 }

@@ -119,18 +119,14 @@ public abstract class Command {
 				// Guild is blacklisted for this command
 				return;
 			}
-			if (this.authorizedGuildIds != null && !this.authorizedGuildIds.isEmpty()
-					&& !this.authorizedGuildIds.contains(event.getGuild().getId())) {
+			if (this.authorizedGuildIds != null && !this.authorizedGuildIds.isEmpty() && !this.authorizedGuildIds.contains(event.getGuild().getId())) {
 				// Guild is not whitelisted for this command
 				return;
 			}
 			if (this.permissionsRequired != null && !this.permissionsRequired.isEmpty()
-					&& (event.getMember().getPermissions().contains(Permission.ADMINISTRATOR)
-							|| !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
+					&& (event.getMember().getPermissions().contains(Permission.ADMINISTRATOR) || !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
 				// User doesn't have the required permissions to use that command.
-				event.getChannel()
-						.sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)")
-						.queue();
+				event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)").queue();
 				return;
 			}
 			if (this.nsfw && !((TextChannel) event.getChannel()).isNSFW()) {
@@ -143,8 +139,7 @@ public abstract class Command {
 		{
 			if (this.guildOnly) {
 				// Not available in PM
-				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: PM_NO)")
-						.queue();
+				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: PM_NO)").queue();
 				return;
 			}
 			if (this.nsfw) {
@@ -158,15 +153,12 @@ public abstract class Command {
 		}
 		if (this.blacklistedUserIds != null && this.blacklistedUserIds.contains(event.getGuild().getId())) {
 			// User is blacklisted for this command
-			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_BL)")
-					.queue();
+			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_BL)").queue();
 			return;
 		}
-		if (this.authorizedUserIds != null && !this.authorizedUserIds.isEmpty()
-				&& !this.authorizedUserIds.contains(event.getAuthor().getId())) {
+		if (this.authorizedUserIds != null && !this.authorizedUserIds.isEmpty() && !this.authorizedUserIds.contains(event.getAuthor().getId())) {
 			// User is not whitelisted for this command
-			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_WL)")
-					.queue();
+			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_WL)").queue();
 			return;
 		}
 

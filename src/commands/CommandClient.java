@@ -12,8 +12,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class CommandClient extends ListenerAdapter {
 
 	public static final String	COMMAND_PREFIX	= "==";
-	private Pattern				commandPattern	= Pattern.compile("^" + COMMAND_PREFIX + "([^\\s]+) ?(.*)",
-			Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
+	private Pattern				commandPattern	= Pattern.compile("^" + COMMAND_PREFIX + "([^\\s]+) ?(.*)", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
 	private final MottoBot	bot;
 	private List<Command>	registeredCommands;
@@ -32,8 +31,7 @@ public class CommandClient extends ListenerAdapter {
 		if (event.getMessage().isWebhookMessage())
 			return;
 
-		if (event.getMessage().getContentRaw().startsWith(COMMAND_PREFIX)
-				&& event.getMessage().getContentRaw().length() > 2)
+		if (event.getMessage().getContentRaw().startsWith(COMMAND_PREFIX) && event.getMessage().getContentRaw().length() > 2)
 			this.lookForCommand(event);
 		else
 			this.lookForTrigger(event);
@@ -54,8 +52,7 @@ public class CommandClient extends ListenerAdapter {
 			String args = matcher.group(2).isEmpty() ? "" : matcher.group(2);
 
 			final Command command;
-			command = this.registeredCommands.stream().filter(cmd -> cmd.getAliases().contains(word)).findAny()
-					.orElse(null);
+			command = this.registeredCommands.stream().filter(cmd -> cmd.getAliases().contains(word)).findAny().orElse(null);
 			if (command != null) {
 				command.run(this.bot, event, args);
 			}

@@ -82,11 +82,9 @@ public class PaginatorAutoStop extends Menu {
 	public static final String	RIGHT		= "\u25B6";
 	public static final String	BIG_RIGHT	= "\u23E9";
 
-	PaginatorAutoStop(EventWaiter waiter, Set<User> users, Set<Role> roles, long timeout, TimeUnit unit,
-			BiFunction<Integer, Integer, Color> color, BiFunction<Integer, Integer, String> text,
-			Consumer<Message> finalAction, int columns, int itemsPerPage, boolean showPageNumbers, boolean numberItems,
-			List<String> items, boolean waitOnSinglePage, int bulkSkipNumber, boolean wrapPageEnds, String leftText,
-			String rightText, boolean allowTextInput) {
+	PaginatorAutoStop(EventWaiter waiter, Set<User> users, Set<Role> roles, long timeout, TimeUnit unit, BiFunction<Integer, Integer, Color> color, BiFunction<Integer, Integer, String> text,
+			Consumer<Message> finalAction, int columns, int itemsPerPage, boolean showPageNumbers, boolean numberItems, List<String> items, boolean waitOnSinglePage, int bulkSkipNumber,
+			boolean wrapPageEnds, String leftText, String rightText, boolean allowTextInput) {
 		super(waiter, users, roles, timeout, unit);
 		this.color = color;
 		this.text = text;
@@ -184,8 +182,7 @@ public class PaginatorAutoStop extends Menu {
 				m.addReaction(LEFT).queue();
 				if (this.bulkSkipNumber > 1)
 					m.addReaction(RIGHT).queue();
-				m.addReaction(this.bulkSkipNumber > 1 ? BIG_RIGHT : RIGHT).queue(v -> this.pagination(m, pageNum),
-						t -> this.pagination(m, pageNum));
+				m.addReaction(this.bulkSkipNumber > 1 ? BIG_RIGHT : RIGHT).queue(v -> this.pagination(m, pageNum), t -> this.pagination(m, pageNum));
 			}
 			else if (this.waitOnSinglePage) {
 				// Go straight to without text-input because only one page is available
@@ -241,11 +238,9 @@ public class PaginatorAutoStop extends Menu {
 
 				final int targetPage;
 
-				if (this.leftText != null && rawContent.equalsIgnoreCase(this.leftText)
-						&& (1 < pageNum || this.wrapPageEnds))
+				if (this.leftText != null && rawContent.equalsIgnoreCase(this.leftText) && (1 < pageNum || this.wrapPageEnds))
 					targetPage = pageNum - 1 < 1 && this.wrapPageEnds ? this.pages : pageNum - 1;
-				else if (this.rightText != null && rawContent.equalsIgnoreCase(this.rightText)
-						&& (pageNum < this.pages || this.wrapPageEnds))
+				else if (this.rightText != null && rawContent.equalsIgnoreCase(this.rightText) && (pageNum < this.pages || this.wrapPageEnds))
 					targetPage = pageNum + 1 > this.pages && this.wrapPageEnds ? 1 : pageNum + 1;
 				else {
 					// This will run without fail because we know the above conditions don't apply
@@ -408,10 +403,8 @@ public class PaginatorAutoStop extends Menu {
 			Checks.check(this.waiter != null, "Must set an EventWaiter");
 			Checks.check(!this.strings.isEmpty(), "Must include at least one item to paginate");
 
-			return new PaginatorAutoStop(this.waiter, this.users, this.roles, this.timeout, this.unit, this.color,
-					this.text, this.finalAction, this.columns, this.itemsPerPage, this.showPageNumbers,
-					this.numberItems, this.strings, this.waitOnSinglePage, this.bulkSkipNumber, this.wrapPageEnds,
-					this.textToLeft, this.textToRight, this.allowTextInput);
+			return new PaginatorAutoStop(this.waiter, this.users, this.roles, this.timeout, this.unit, this.color, this.text, this.finalAction, this.columns, this.itemsPerPage, this.showPageNumbers,
+					this.numberItems, this.strings, this.waitOnSinglePage, this.bulkSkipNumber, this.wrapPageEnds, this.textToLeft, this.textToRight, this.allowTextInput);
 		}
 
 		/**

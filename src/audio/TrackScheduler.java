@@ -47,8 +47,7 @@ public class TrackScheduler extends AudioEventAdapter {
 				textChannel.sendMessage(":x: Ma playlist est trop remplie !").queue();
 				return;
 			}
-			textChannel.sendMessage(":musical_score: \"" + track.getInfo().title + "\" ajouté à la file d'attente.")
-					.queue();
+			textChannel.sendMessage(":musical_score: \"" + track.getInfo().title + "\" ajouté à la file d'attente.").queue();
 		}
 	}
 
@@ -65,15 +64,11 @@ public class TrackScheduler extends AudioEventAdapter {
 		}
 		for (int i = 1; i < list.size(); i++) {
 			if (!this.queue.offer(list.get(i))) {
-				textChannel
-						.sendMessage(
-								":x: Ma playlist est trop remplie(mais j'ai peut-être réussi à ajouter quelques titres) !")
-						.queue();
+				textChannel.sendMessage(":x: Ma playlist est trop remplie(mais j'ai peut-être réussi à ajouter quelques titres) !").queue();
 				return;
 			}
 		}
-		textChannel.sendMessage(":musical_score: Playlist \"" + playlist.getName() + "\" ajoutée à la file d'attente.")
-				.queue();
+		textChannel.sendMessage(":musical_score: Playlist \"" + playlist.getName() + "\" ajoutée à la file d'attente.").queue();
 	}
 
 	public synchronized void nextTrack() {
@@ -115,11 +110,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
-		String ytURL = (track.getSourceManager().getSourceName().equals("youtube")) ? " (<" + track.getInfo().uri + ">)"
-				: "";
+		String ytURL = (track.getSourceManager().getSourceName().equals("youtube")) ? " (<" + track.getInfo().uri + ">)" : "";
 
-		this.activeTextChannel.sendMessage(":musical_note: Joue maintenant: \"" + track.getInfo().title + "\"" + ytURL)
-				.queue();
+		this.activeTextChannel.sendMessage(":musical_note: Joue maintenant: \"" + track.getInfo().title + "\"" + ytURL).queue();
 	}
 
 	@Override

@@ -30,8 +30,7 @@ public abstract class Trigger {
 		this.permissionsRequired = new ArrayList<>();
 	}
 
-	public Trigger(String name, String shortHelp, String longHelp, List<String> authorizedGuildIds,
-			List<String> authorizedUserIds, List<String> blacklistedGuildIds, List<String> blacklistedUserIds,
+	public Trigger(String name, String shortHelp, String longHelp, List<String> authorizedGuildIds, List<String> authorizedUserIds, List<String> blacklistedGuildIds, List<String> blacklistedUserIds,
 			List<Permission> permissionsRequired) {
 		super();
 		this.name = name;
@@ -85,14 +84,12 @@ public abstract class Trigger {
 				// Guild is blacklisted for this trigger
 				return;
 			}
-			if (this.authorizedGuildIds != null && !this.authorizedGuildIds.isEmpty()
-					&& !this.authorizedGuildIds.contains(event.getGuild().getId())) {
+			if (this.authorizedGuildIds != null && !this.authorizedGuildIds.isEmpty() && !this.authorizedGuildIds.contains(event.getGuild().getId())) {
 				// Guild is not whitelisted for this trigger
 				return;
 			}
 			if (this.permissionsRequired != null && !this.permissionsRequired.isEmpty()
-					&& (event.getMember().getPermissions().contains(Permission.ADMINISTRATOR)
-							|| !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
+					&& (event.getMember().getPermissions().contains(Permission.ADMINISTRATOR) || !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
 				// User doesn't have the required permissions for this trigger
 				return;
 			}
@@ -109,8 +106,7 @@ public abstract class Trigger {
 			// User is blacklisted for this trigger
 			return;
 		}
-		if (this.authorizedUserIds != null && !this.authorizedUserIds.isEmpty()
-				&& !this.authorizedUserIds.contains(event.getAuthor().getId())) {
+		if (this.authorizedUserIds != null && !this.authorizedUserIds.isEmpty() && !this.authorizedUserIds.contains(event.getAuthor().getId())) {
 			// User is not whitelisted for this trigger
 			return;
 		}

@@ -146,19 +146,14 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	private void registerCommands() {
-		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart")
-				.addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
-		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR)
-				.addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 
 		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
 		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
-		this.commandClient
-				.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
-		this.commandClient
-				.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
-		this.commandClient
-				.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
+		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
+		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
+		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
 
 		this.commandClient.addCommand(new CmdVersion("version").addAlias("mversion"));
 
@@ -171,21 +166,17 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	public void setDefaultPresence() {
-		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX + "help"),
-				true);
+		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX + "help"), true);
 	}
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent event) {
-		System.out.println(timestamp() + "J'ai rejoint la guilde \"" + event.getGuild().getName() + "\" ["
-				+ event.getGuild().getId() + "].");
+		System.out.println(timestamp() + "J'ai rejoint la guilde \"" + event.getGuild().getName() + "\" [" + event.getGuild().getId() + "].");
 	}
 
 	@Override
 	public void onDisconnect(DisconnectEvent event) {
-		System.err.println(
-				event.getDisconnectTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE))
-						+ "\tDéconnecté ! Tentative de reconnection...");
+		System.err.println(event.getDisconnectTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE)) + "\tDéconnecté ! Tentative de reconnection...");
 	}
 
 	@Override
@@ -204,8 +195,7 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	public static String timestamp() {
-		return OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE))
-				+ "\t";
+		return OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE)) + "\t";
 	}
 
 	@SuppressWarnings("unused")

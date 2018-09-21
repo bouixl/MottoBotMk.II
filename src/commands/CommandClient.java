@@ -55,6 +55,7 @@ public class CommandClient extends ListenerAdapter {
 			command = this.registeredCommands.stream().filter(cmd -> cmd.getAliases().contains(word)).findAny().orElse(null);
 			if (command != null) {
 				command.run(this.bot, event, args);
+				this.bot.addToClearTab(event.getMessage());
 			}
 		}
 		else {

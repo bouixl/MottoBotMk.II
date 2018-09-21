@@ -27,7 +27,7 @@ public class CmdPlaylist extends Command {
 			pgBuilder.setItemsPerPage(10);
 			pgBuilder.setColumns(1);
 			pgBuilder.setEventWaiter(bot.getWaiter());
-			pgBuilder.setTimeout(2, TimeUnit.MINUTES);
+			pgBuilder.setTimeout(3, TimeUnit.MINUTES);
 			pgBuilder.setFinalAction(m -> m.delete().complete());
 			PaginatorAutoStop pg = pgBuilder.build();
 

@@ -124,7 +124,7 @@ public abstract class Command {
 				return;
 			}
 			if (this.permissionsRequired != null && !this.permissionsRequired.isEmpty()
-					&& (event.getMember().getPermissions().contains(Permission.ADMINISTRATOR) || !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
+					&& (!event.getMember().getPermissions().contains(Permission.ADMINISTRATOR) || !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
 				// User doesn't have the required permissions to use that command.
 				event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)").queue();
 				return;

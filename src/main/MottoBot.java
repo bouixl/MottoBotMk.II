@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -25,6 +27,8 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.DisconnectEvent;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ReconnectedEvent;
@@ -32,12 +36,13 @@ import net.dv8tion.jda.core.events.ResumedEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import utils.CommonIDs;
 
 public class MottoBot extends ListenerAdapter {
 
-	public static final String MOTTO_VERSION = "180918-1";
+	public static final String MOTTO_VERSION = "180921-1";
 
 	public static MottoBot INSTANCE;
 
@@ -48,6 +53,7 @@ public class MottoBot extends ListenerAdapter {
 	private final AudioPlayerManager			playerManager;
 	private final Map<Long, GuildMusicManager>	musicManagers;
 	private final EventWaiter					waiter;
+	private HashMap<Long, HashMap<Long, CircularFifoQueue<String>>> clearTab;
 
 	public static void main(String[] args) {
 		if (args.length < 1)
@@ -81,6 +87,7 @@ public class MottoBot extends ListenerAdapter {
 	public MottoBot(String token) {
 		this.startTime = Instant.now();
 		this.token = token;
+		this.clearTab = new HashMap<>();
 
 		this.commandClient = new CommandClient(this);
 		this.waiter = new EventWaiter();
@@ -117,6 +124,34 @@ public class MottoBot extends ListenerAdapter {
 		this.registerTriggers();
 	}
 
+	private void registerCommands() {
+		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+
+		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").addRequiredPermission(Permission.MESSAGE_MANAGE));
+		this.commandClient.addCommand(new CmdNinja("ninja").addAliases("mottoninja","mninja").setGuildOnly().addRequiredPermission(Permission.ADMINISTRATOR));
+
+		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
+		this.commandClient.addCommand(new CmdVersion("version").addAliases("mversion", "mottoversion"));
+		this.commandClient.addCommand(new CmdPing("ping").addAliases("mping", "mottoping"));
+
+		this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.KICK_MEMBERS).addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
+
+		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
+		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
+		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
+		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
+		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
+	}
+
+	private void registerTriggers() {
+		// TODO
+	}
+
+	public String getToken() {
+		return this.token;
+	}
+
 	public synchronized GuildMusicManager getGuildMusicManager(Guild guild) {
 		GuildMusicManager gmm = null;
 		long gID = guild.getIdLong();
@@ -131,44 +166,23 @@ public class MottoBot extends ListenerAdapter {
 		return gmm;
 	}
 
-	public void shutdown() {
-		this.jda.getGuilds().stream().forEach(g -> {
-			g.getAudioManager().closeAudioConnection();
-			GuildMusicManager m = this.musicManagers.get(g.getIdLong());
-			if (m != null) {
-				m.scheduler.clearPlaylist();
-				m.player.destroy();
-			}
-		});
-		this.playerManager.shutdown();
-		this.jda.shutdown();
+	public AudioPlayerManager getPlayerManager() {
+		return this.playerManager;
 	}
 
-	private void registerTriggers() {
-		// TODO
+	public EventWaiter getWaiter() {
+		return this.waiter;
 	}
 
-	private void registerCommands() {
-		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
-		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
-
-		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
-		this.commandClient.addCommand(new CmdVersion("version").addAliases("mversion", "mottoversion"));
-
-		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
-		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
-		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
-		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
-		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
+	public String getUptime() {
+		Duration d = Duration.between(this.startTime, Instant.now());
+		String uptime = formatDuration(d);
+		return uptime;
 	}
 
 	@Override
 	public void onReady(ReadyEvent event) {
 		System.out.println(timestamp() + "Prêt !");
-	}
-
-	public void setDefaultPresence() {
-		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX + "help"), true);
 	}
 
 	@Override
@@ -196,6 +210,26 @@ public class MottoBot extends ListenerAdapter {
 		System.out.println(timestamp() + "Déconnecté ! Extinction...");
 	}
 
+	@Override
+	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+		if(event.getAuthor().equals(this.jda.getSelfUser())) {
+			this.addToClearTab(event.getMessage());
+		}
+	}
+
+	public static String formatDuration(Duration d) {
+		String res;
+
+		long jours = d.toDays();
+		long heures = d.minusDays(jours).toHours();
+		long minutes = d.minusDays(jours).minusHours(heures).toMinutes();
+		long secondes = d.minusDays(jours).minusHours(heures).minusMinutes(minutes).getSeconds();
+
+		res = jours + " jours, " + heures + " heures, " + minutes + " minutes et " + secondes + " secondes ";
+
+		return res;
+	}
+
 	public static String timestamp() {
 		return OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE)) + "\t";
 	}
@@ -214,34 +248,47 @@ public class MottoBot extends ListenerAdapter {
 		return res;
 	}
 
-	public String getUptime() {
-		Duration d = Duration.between(this.startTime, Instant.now());
-		String uptime = formatDuration(d);
-		return uptime;
+	public void shutdown() {
+		this.jda.getGuilds().stream().forEach(g -> {
+			g.getAudioManager().closeAudioConnection();
+			GuildMusicManager m = this.musicManagers.get(g.getIdLong());
+			if (m != null) {
+				m.scheduler.clearPlaylist();
+				m.player.destroy();
+			}
+		});
+		this.playerManager.shutdown();
+		this.jda.shutdown();
 	}
 
-	public static String formatDuration(Duration d) {
-		String res;
-
-		long jours = d.toDays();
-		long heures = d.minusDays(jours).toHours();
-		long minutes = d.minusDays(jours).minusHours(heures).toMinutes();
-		long secondes = d.minusDays(jours).minusHours(heures).minusMinutes(minutes).getSeconds();
-
-		res = jours + " jours, " + heures + " heures, " + minutes + " minutes et " + secondes + " secondes ";
-
-		return res;
+	public void setDefaultPresence() {
+		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX + "help"), true);
 	}
 
-	public String getToken() {
-		return this.token;
+	public int clearChannelTab(TextChannel channel) {
+		long gID = channel.getGuild().getIdLong();
+		long cID = channel.getIdLong();
+
+		this.clearTab.putIfAbsent(gID, new HashMap<Long, CircularFifoQueue<String>>());
+		HashMap<Long, CircularFifoQueue<String>> guildTab = this.clearTab.get(gID);
+		CircularFifoQueue<String> messages = guildTab.get(cID);
+		if (messages==null || messages.size()<2)
+			return 0;
+
+		channel.deleteMessagesByIds(messages).queue();
+		guildTab.put(cID, new CircularFifoQueue<String>(100));
+
+		return messages.size();
 	}
 
-	public AudioPlayerManager getPlayerManager() {
-		return this.playerManager;
-	}
+	public void addToClearTab(Message m) {
+		Long gID = m.getGuild().getIdLong();
+		Long cID = m.getChannel().getIdLong();
 
-	public EventWaiter getWaiter() {
-		return this.waiter;
+		this.clearTab.putIfAbsent(gID, new HashMap<Long, CircularFifoQueue<String>>());
+		HashMap<Long, CircularFifoQueue<String>> guildTab = this.clearTab.get(gID);
+		guildTab.putIfAbsent(cID, new CircularFifoQueue<String>(100));
+
+		guildTab.get(cID).add(m.getId());
 	}
 }

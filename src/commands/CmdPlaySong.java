@@ -20,7 +20,7 @@ public class CmdPlaySong extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if (args == null)
+		if(args == null || args.trim().isEmpty())
 			return;
 
 		VoiceChannel voiceChannel = event.getMember().getVoiceState().getChannel();

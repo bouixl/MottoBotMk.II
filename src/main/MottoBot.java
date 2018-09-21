@@ -18,6 +18,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import audio.GuildMusicManager;
+import audio.TrackScheduler;
 import commands.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -29,12 +30,15 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.DisconnectEvent;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ReconnectedEvent;
 import net.dv8tion.jda.core.events.ResumedEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceDeafenEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -128,7 +132,7 @@ public class MottoBot extends ListenerAdapter {
 		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 
-		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").addRequiredPermission(Permission.MESSAGE_MANAGE));
+		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").setGuildOnly().addRequiredPermission(Permission.MESSAGE_MANAGE));
 		this.commandClient.addCommand(new CmdNinja("ninja").addAliases("mottoninja","mninja").setGuildOnly().addRequiredPermission(Permission.ADMINISTRATOR));
 
 		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
@@ -216,6 +220,40 @@ public class MottoBot extends ListenerAdapter {
 			this.addToClearTab(event.getMessage());
 		}
 	}
+
+    public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
+		VoiceChannel channel = event.getGuild().getAudioManager().getConnectedChannel();
+		if(channel!=null) {
+			if(event.getChannelLeft().equals(channel)) {
+
+				if(!TrackScheduler.hasAtLeastOneListener(channel)) {
+			    	Long gID = event.getGuild().getIdLong();
+			    	GuildMusicManager gmm = this.musicManagers.get(gID);
+			    	if(gmm!=null) {
+			    		gmm.player.stopTrack();
+			    	}
+					event.getGuild().getAudioManager().closeAudioConnection();
+				}
+			}
+		}
+    }
+
+    public void onGuildVoiceDeafen(GuildVoiceDeafenEvent event) {
+		VoiceChannel channel = event.getGuild().getAudioManager().getConnectedChannel();
+		if(channel!=null) {
+			if(event.getVoiceState().getAudioChannel().equals(channel)) {
+
+				if(!TrackScheduler.hasAtLeastOneListener(channel)) {
+			    	Long gID = event.getGuild().getIdLong();
+			    	GuildMusicManager gmm = this.musicManagers.get(gID);
+			    	if(gmm!=null) {
+			    		gmm.player.stopTrack();
+			    	}
+					event.getGuild().getAudioManager().closeAudioConnection();
+				}
+			}
+		}
+    }
 
 	public static String formatDuration(Duration d) {
 		String res;

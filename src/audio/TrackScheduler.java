@@ -128,9 +128,6 @@ public class TrackScheduler extends AudioEventAdapter {
 			if(voiceChannel!=null && hasAtLeastOneListener(voiceChannel)) {
 				this.nextTrack();
 			}
-			else {
-				this.guild.getAudioManager().closeAudioConnection();
-			}
 		}
 
 		// endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
@@ -152,7 +149,7 @@ public class TrackScheduler extends AudioEventAdapter {
 		// Audio track has been unable to provide us any audio, might want to just start a new track
 	}
 
-	private boolean hasAtLeastOneListener(VoiceChannel voiceChannel) {
+	public static boolean hasAtLeastOneListener(VoiceChannel voiceChannel) {
 		for(Member m : voiceChannel.getMembers()) {
 			if(!m.getUser().isBot()) {
 				if(!m.getVoiceState().isDeafened()) {

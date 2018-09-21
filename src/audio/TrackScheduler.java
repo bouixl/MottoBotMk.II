@@ -24,7 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class TrackScheduler extends AudioEventAdapter {
 
-	private static final int MAX_PLAYLIST_SIZE = 100;
+	private static final int MAX_PLAYLIST_SIZE = 150;
 
 	private final AudioPlayer				player;
 	private final Guild						guild;
@@ -127,6 +127,9 @@ public class TrackScheduler extends AudioEventAdapter {
 			VoiceChannel voiceChannel = this.guild.getAudioManager().getConnectedChannel();
 			if(voiceChannel!=null && hasAtLeastOneListener(voiceChannel)) {
 				this.nextTrack();
+			}
+			else {
+				this.guild.getAudioManager().closeAudioConnection();
 			}
 		}
 

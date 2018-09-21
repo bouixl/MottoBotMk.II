@@ -35,6 +35,7 @@ public class CmdShufflePlaylist extends Command {
 			pgBuilder.setColumns(1);
 			pgBuilder.setEventWaiter(bot.getWaiter());
 			pgBuilder.setTimeout(3, TimeUnit.MINUTES);
+			pgBuilder.waitOnSinglePage(true);
 			PaginatorAutoStop pg = pgBuilder.build();
 
 			pg.display(event.getChannel());

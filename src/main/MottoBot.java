@@ -233,6 +233,7 @@ public class MottoBot extends ListenerAdapter {
 			    	GuildMusicManager gmm = this.musicManagers.get(gID);
 			    	if(gmm!=null) {
 			    		gmm.player.stopTrack();
+			    		gmm.scheduler.clearPlaylist();
 			    	}
 					event.getGuild().getAudioManager().closeAudioConnection();
 				}
@@ -250,6 +251,7 @@ public class MottoBot extends ListenerAdapter {
 			    	GuildMusicManager gmm = this.musicManagers.get(gID);
 			    	if(gmm!=null) {
 			    		gmm.player.stopTrack();
+			    		gmm.scheduler.clearPlaylist();
 			    	}
 					event.getGuild().getAudioManager().closeAudioConnection();
 				}

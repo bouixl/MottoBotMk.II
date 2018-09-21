@@ -15,7 +15,7 @@ public class CmdPlaylist extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild().getIdLong());
+		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 

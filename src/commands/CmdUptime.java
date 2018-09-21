@@ -3,15 +3,15 @@ package commands;
 import main.MottoBot;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CmdTestArgs extends Command {
+public class CmdUptime extends Command {
 
-	public CmdTestArgs(String name) {
+	public CmdUptime(String name) {
 		super(name);
 	}
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		event.getChannel().sendMessage("+" + args + "+").queue();
+		event.getChannel().sendMessage("En ligne depuis "+bot.getUptime()).queue();
 	}
 
 }

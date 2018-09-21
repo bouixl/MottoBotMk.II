@@ -21,6 +21,7 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -116,10 +117,12 @@ public class MottoBot extends ListenerAdapter {
 		this.registerTriggers();
 	}
 
-	public synchronized GuildMusicManager getGuildMusicManager(long gID) {
+	public synchronized GuildMusicManager getGuildMusicManager(Guild guild) {
 		GuildMusicManager gmm = null;
+		long gID = guild.getIdLong();
+
 		if ((gmm = this.musicManagers.get(gID)) == null) {
-			gmm = new GuildMusicManager(this.playerManager);
+			gmm = new GuildMusicManager(guild, this.playerManager);
 			this.musicManagers.put(gID, gmm);
 
 			this.jda.getGuildById(gID).getAudioManager().setSendingHandler(gmm.getSendHandler());
@@ -149,15 +152,14 @@ public class MottoBot extends ListenerAdapter {
 		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 
+		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
+		this.commandClient.addCommand(new CmdVersion("version").addAliases("mversion", "mottoversion"));
+
 		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
 		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
 		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
 		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
 		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
-
-		this.commandClient.addCommand(new CmdVersion("version").addAlias("mversion"));
-
-		this.commandClient.addCommand(new CmdTestArgs("test"));
 	}
 
 	@Override

@@ -7,7 +7,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +27,7 @@ public class TrackScheduler extends AudioEventAdapter {
 	private static final int MAX_PLAYLIST_SIZE = 100;
 
 	private final AudioPlayer				player;
+	private final Guild						guild;
 	private final BlockingQueue<AudioTrack>	queue;
 	private TextChannel						activeTextChannel;
 
@@ -31,8 +35,9 @@ public class TrackScheduler extends AudioEventAdapter {
 	 * @param player
 	 *            The audio player this scheduler uses
 	 */
-	public TrackScheduler(AudioPlayer player) {
+	public TrackScheduler(Guild guild, AudioPlayer player) {
 		this.player = player;
+		this.guild = guild;
 		this.queue = new LinkedBlockingQueue<>(MAX_PLAYLIST_SIZE);
 		this.activeTextChannel = null;
 	}
@@ -118,7 +123,11 @@ public class TrackScheduler extends AudioEventAdapter {
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 		if (endReason.mayStartNext) {
-			this.nextTrack();
+			// Inutile de jouer pour personne
+			VoiceChannel voiceChannel = this.guild.getAudioManager().getConnectedChannel();
+			if(voiceChannel!=null && hasAtLeastOneListener(voiceChannel)) {
+				this.nextTrack();
+			}
 		}
 
 		// endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
@@ -138,5 +147,17 @@ public class TrackScheduler extends AudioEventAdapter {
 	@Override
 	public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
 		// Audio track has been unable to provide us any audio, might want to just start a new track
+	}
+
+	private boolean hasAtLeastOneListener(VoiceChannel voiceChannel) {
+		for(Member m : voiceChannel.getMembers()) {
+			if(!m.getUser().isBot()) {
+				if(!m.getVoiceState().isDeafened()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

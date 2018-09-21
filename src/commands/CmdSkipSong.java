@@ -22,7 +22,7 @@ public class CmdSkipSong extends Command {
 			}
 
 			for (int i = 0; i < nbOfSkips; i++) {
-				bot.getGuildMusicManager(event.getGuild().getIdLong()).scheduler.nextTrack();
+				bot.getGuildMusicManager(event.getGuild()).scheduler.nextTrack();
 			}
 		}
 		else {

@@ -35,7 +35,7 @@ public class CmdPlaySong extends Command {
 			audioManager.openAudioConnection(voiceChannel);
 
 		// Chargement et lancement de la musique
-		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild().getIdLong());
+		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
 		bot.getPlayerManager().loadItemOrdered(gmm.player, args, new AudioLoadResultHandler() {
 

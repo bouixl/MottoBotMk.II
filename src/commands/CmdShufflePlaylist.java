@@ -20,7 +20,7 @@ public class CmdShufflePlaylist extends Command {
 			return;
 		}
 
-		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild().getIdLong());
+		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		gmm.scheduler.shufflePlaylist();
 		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
 

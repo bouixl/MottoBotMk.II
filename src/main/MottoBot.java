@@ -136,18 +136,18 @@ public class MottoBot extends ListenerAdapter {
 
 		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").setGuildOnly().addRequiredPermission(Permission.MESSAGE_MANAGE));
 		this.commandClient.addCommand(new CmdNinja("ninja").addAliases("mottoninja","mninja").setGuildOnly().addRequiredPermission(Permission.ADMINISTRATOR));
+		this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.KICK_MEMBERS).addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
 
 		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
 		this.commandClient.addCommand(new CmdVersion("version").addAliases("mversion", "mottoversion"));
 		this.commandClient.addCommand(new CmdPing("ping").addAliases("mping", "mottoping"));
-
-		this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.KICK_MEMBERS).addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
 
 		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
 		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
 		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
 		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
 		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
+		this.commandClient.addCommand(new CmdSetVolume("volume").addAliases("setvolume","mvolume","mottovolume").setGuildOnly().addRequiredPermission(Permission.VOICE_CONNECT).addRequiredPermission(Permission.VOICE_DEAF_OTHERS));
 	}
 
 	private void registerTriggers() {

@@ -12,25 +12,26 @@ public class CmdSetVolume extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if(args == null || args.trim().isEmpty())
-			return;
-
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
-		try {
-			int newVol = Integer.valueOf(args);
-			if(newVol>80) {
-				newVol = 80;
-			}
-			else if(newVol<5) {
-				newVol = 5;
-			}
-			gmm.player.setVolume(newVol);
-			event.getChannel().sendMessage(":musical_note: Mon volume de base est maintenant réglé sur "+newVol+" !").queue();
+		if(args == null || args.trim().isEmpty()) {
+			event.getChannel().sendMessage(":gear: Volume actuel: " + gmm.player.getVolume());
 		}
-		catch (Exception e) {
-			event.getChannel().sendMessage(":x: Merci de renseigner un nombre entier compris entre 5 et 80.").queue();
-			e.printStackTrace();
+		else {
+			try {
+				int newVol = Integer.valueOf(args);
+				if(newVol>80) {
+					newVol = 80;
+				}
+				else if(newVol<5) {
+					newVol = 5;
+				}
+				gmm.player.setVolume(newVol);
+				event.getChannel().sendMessage(":gear: Mon volume de base est maintenant réglé sur "+newVol+" !").queue();
+			}
+			catch (Exception e) {
+				event.getChannel().sendMessage(":x: Merci de renseigner un nombre entier compris entre 5 et 80.").queue();
+				e.printStackTrace();
+			}
 		}
-
 	}
 }

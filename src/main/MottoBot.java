@@ -131,8 +131,8 @@ public class MottoBot extends ListenerAdapter {
 	private void registerCommands() {
 		this.commandClient.addCommand(new CmdHelp("help").addAliases("mhelp", "mottohelp"));
 
-		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
-		this.commandClient.addCommand(new CmdShutdown("shutdown").addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").setPrivateOnly().addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
+		this.commandClient.addCommand(new CmdShutdown("shutdown").setPrivateOnly().addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
 
 		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").setGuildOnly().addRequiredPermission(Permission.MESSAGE_MANAGE));
 		this.commandClient.addCommand(new CmdNinja("ninja").addAliases("mottoninja","mninja").setGuildOnly().addRequiredPermission(Permission.ADMINISTRATOR));
@@ -147,7 +147,7 @@ public class MottoBot extends ListenerAdapter {
 		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
 		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
 		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
-		this.commandClient.addCommand(new CmdSetVolume("volume").addAliases("setvolume","mvolume","mottovolume").setGuildOnly().addRequiredPermission(Permission.VOICE_CONNECT).addRequiredPermission(Permission.VOICE_DEAF_OTHERS));
+		this.commandClient.addCommand(new CmdSetVolume("volume").addAliases("mvolume","mottovolume").setGuildOnly().addRequiredPermission(Permission.VOICE_CONNECT).addRequiredPermission(Permission.VOICE_DEAF_OTHERS));
 	}
 
 	private void registerTriggers() {

@@ -129,6 +129,8 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	private void registerCommands() {
+		this.commandClient.addCommand(new CmdMotto("motto").addAliases("motto"));
+		
 		this.commandClient.addCommand(new CmdHelp("help").addAliases("mhelp", "mottohelp"));
 
 		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").setPrivateOnly().addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));

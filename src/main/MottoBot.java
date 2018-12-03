@@ -138,7 +138,7 @@ public class MottoBot extends ListenerAdapter {
 
 		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").setGuildOnly().addRequiredPermission(Permission.MESSAGE_MANAGE));
 		this.commandClient.addCommand(new CmdNinja("ninja").addAliases("mottoninja","mninja").setGuildOnly().addRequiredPermission(Permission.ADMINISTRATOR));
-		this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.KICK_MEMBERS).addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
+		this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
 
 		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
 		this.commandClient.addCommand(new CmdVersion("version").addAliases("mversion", "mottoversion"));

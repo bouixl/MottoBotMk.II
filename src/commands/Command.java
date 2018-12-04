@@ -151,7 +151,7 @@ public abstract class Command {
 		{
 			return;
 		}
-		if (this.blacklistedUserIds != null && this.blacklistedUserIds.contains(event.getGuild().getId())) {
+		if (this.blacklistedUserIds != null && this.blacklistedUserIds.contains(event.getAuthor().getId())) {
 			// User is blacklisted for this command
 			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_BL)").queue();
 			return;

@@ -130,7 +130,7 @@ public class MottoBot extends ListenerAdapter {
 
 	private void registerCommands() {
 		this.commandClient.addCommand(new CmdMotto("motto").addAliases("motto"));
-		
+
 		this.commandClient.addCommand(new CmdHelp("help").addAliases("mhelp", "mottohelp"));
 
 		this.commandClient.addCommand(new CmdRestart("restart").addAliases("reboot", "mreboot", "mrestart").setPrivateOnly().addAuthorizedUserId(CommonIDs.U_WYLENTAR).addAuthorizedUserId(CommonIDs.U_MOMOJEAN));
@@ -326,13 +326,15 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	public void addToClearTab(Message m) {
-		Long gID = m.getGuild().getIdLong();
-		Long cID = m.getChannel().getIdLong();
+		if(m.getChannelType().isGuild()) {
+			Long gID = m.getGuild().getIdLong();
+			Long cID = m.getChannel().getIdLong();
 
-		this.clearTab.putIfAbsent(gID, new HashMap<Long, CircularFifoQueue<String>>());
-		HashMap<Long, CircularFifoQueue<String>> guildTab = this.clearTab.get(gID);
-		guildTab.putIfAbsent(cID, new CircularFifoQueue<String>(100));
+			this.clearTab.putIfAbsent(gID, new HashMap<Long, CircularFifoQueue<String>>());
+			HashMap<Long, CircularFifoQueue<String>> guildTab = this.clearTab.get(gID);
+			guildTab.putIfAbsent(cID, new CircularFifoQueue<String>(100));
 
-		guildTab.get(cID).add(m.getId());
+			guildTab.get(cID).add(m.getId());
+		}
 	}
 }

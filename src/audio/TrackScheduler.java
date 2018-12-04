@@ -80,6 +80,13 @@ public class TrackScheduler extends AudioEventAdapter {
 		this.player.startTrack(this.queue.poll(), false);
 	}
 
+	public synchronized void skipTrack(int n) {
+		for(int i=0; i<n-1; i++) {
+			this.queue.poll();
+		}
+		this.player.startTrack(this.queue.poll(), false);
+	}
+
 	public synchronized void clearPlaylist() {
 		this.queue.clear();
 		this.player.startTrack(this.queue.poll(), false);

@@ -14,7 +14,7 @@ public class CmdSetVolume extends Command {
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		if(args == null || args.trim().isEmpty()) {
-			event.getChannel().sendMessage(":gear: Volume actuel: " + gmm.player.getVolume());
+			event.getChannel().sendMessage(":gear: Volume actuel: " + gmm.player.getVolume()).queue();
 		}
 		else {
 			try {

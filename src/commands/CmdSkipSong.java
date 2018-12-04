@@ -21,9 +21,7 @@ public class CmdSkipSong extends Command {
 				nbOfSkips = 1;
 			}
 
-			for (int i = 0; i < nbOfSkips; i++) {
-				bot.getGuildMusicManager(event.getGuild()).scheduler.nextTrack();
-			}
+			bot.getGuildMusicManager(event.getGuild()).scheduler.skipTrack(nbOfSkips);
 		}
 		else {
 			event.getChannel().sendMessage(":x: <@" + event.getAuthor().getId() + ">, tu dois être dans un channel vocal pour effectuer cette commande.").queue();

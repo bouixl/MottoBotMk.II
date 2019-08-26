@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class CommandClient extends ListenerAdapter {
 
-	public static final String	COMMAND_PREFIX	= "¤";
+	public static final String	COMMAND_PREFIX	= "=";
 	private Pattern				commandPattern	= Pattern.compile("^" + COMMAND_PREFIX + "([^\\s]+) ?(.*)", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
 	private final MottoBot	bot;

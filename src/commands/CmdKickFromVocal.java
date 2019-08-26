@@ -1,9 +1,9 @@
 package commands;
 
 import main.MottoBot;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdKickFromVocal extends Command {
 
@@ -22,7 +22,7 @@ public class CmdKickFromVocal extends Command {
 			if(author.canInteract(target)) {
 				if(target.getVoiceState().inVoiceChannel()) {
 					if(event.getGuild().getVoiceChannelsByName("Kick en cours", true).isEmpty()) {
-						event.getGuild().getController().createVoiceChannel("Kick en cours").queue(c -> event.getGuild().getController().moveVoiceMember(target, (VoiceChannel) c).queue(success -> c.delete().queue()));
+						event.getGuild().createVoiceChannel("Kick en cours").queue(c -> event.getGuild().moveVoiceMember(target, (VoiceChannel) c).queue(success -> c.delete().queue()));
 					}
 				}
 			}

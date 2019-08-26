@@ -6,12 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.MottoBot;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class CommandClient extends ListenerAdapter {
 
-	public static final String	COMMAND_PREFIX	= "=";
+	public static final String	COMMAND_PREFIX	= "¤";
 	private Pattern				commandPattern	= Pattern.compile("^" + COMMAND_PREFIX + "([^\\s]+) ?(.*)", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
 	private final MottoBot	bot;

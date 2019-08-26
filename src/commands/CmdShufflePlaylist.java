@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import audio.GuildMusicManager;
 import main.MottoBot;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import utils.PaginatorAutoStop;
 
 public class CmdShufflePlaylist extends Command {

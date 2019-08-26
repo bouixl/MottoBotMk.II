@@ -1,8 +1,8 @@
 package commands;
 
 import main.MottoBot;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdCleanUp extends Command {
 

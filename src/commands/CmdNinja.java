@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.MottoBot;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdNinja extends Command {
 
@@ -19,7 +19,7 @@ public class CmdNinja extends Command {
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		if(event.getMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_MANAGE))
 		{
-			OffsetDateTime oldest = event.getMessage().getCreationTime();
+			OffsetDateTime oldest = event.getMessage().getTimeCreated();
 			OffsetDateTime twoDaysAgo = OffsetDateTime.now();
 			twoDaysAgo = twoDaysAgo.minusDays(2);
 			event.getMessage().delete().queue();
@@ -33,10 +33,10 @@ public class CmdNinja extends Command {
 
 				List<Message> l = mh.getRetrievedHistory();
 				for(Message m:l) {
-					if(m.getCreationTime().isAfter(twoDaysAgo) && m.getCreationTime().isBefore(oldest)) {
+					if(m.getTimeCreated().isAfter(twoDaysAgo) && m.getTimeCreated().isBefore(oldest)) {
 						if(m.isPinned()==false) {
 							mbot.add(m.getId());
-							oldest = m.getCreationTime();
+							oldest = m.getTimeCreated();
 						}
 					}
 				}
@@ -52,7 +52,7 @@ public class CmdNinja extends Command {
 					System.out.println("Je n'ai rien supprimé.");
 				}
 				if(l.size()>1) {
-					oldest = l.get(l.size()-1).getCreationTime();
+					oldest = l.get(l.size()-1).getTimeCreated();
 				}
 				past = mh.retrievePast(80).complete();
 			}

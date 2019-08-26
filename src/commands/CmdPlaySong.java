@@ -8,9 +8,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import audio.GuildMusicManager;
 import main.MottoBot;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.managers.AudioManager;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.managers.AudioManager;
 
 public class CmdPlaySong extends Command {
 

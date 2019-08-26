@@ -27,18 +27,18 @@ import java.util.function.Consumer;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Menu;
 
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.GenericMessageEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.exceptions.PermissionException;
-import net.dv8tion.jda.core.requests.RestAction;
-import net.dv8tion.jda.core.utils.Checks;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.internal.utils.Checks;
 
 /**
  * A {@link com.jagrosh.jdautilities.menu.Menu Menu} implementation that paginates a
@@ -104,8 +104,8 @@ public class PaginatorAutoStop extends Menu {
 	}
 
 	/**
-	 * Begins pagination on page 1 as a new {@link net.dv8tion.jda.core.entities.Message Message}
-	 * in the provided {@link net.dv8tion.jda.core.entities.MessageChannel MessageChannel}.
+	 * Begins pagination on page 1 as a new {@link net.dv8tion.jda.api.entities.Message Message}
+	 * in the provided {@link net.dv8tion.jda.api.entities.MessageChannel MessageChannel}.
 	 *
 	 * <p>
 	 * Starting on another page is available via {@link
@@ -122,7 +122,7 @@ public class PaginatorAutoStop extends Menu {
 
 	/**
 	 * Begins pagination on page 1 displaying this Pagination by editing the provided
-	 * {@link net.dv8tion.jda.core.entities.Message Message}.
+	 * {@link net.dv8tion.jda.api.entities.Message Message}.
 	 *
 	 * <p>
 	 * Starting on another page is available via
@@ -137,8 +137,8 @@ public class PaginatorAutoStop extends Menu {
 	}
 
 	/**
-	 * Begins pagination as a new {@link net.dv8tion.jda.core.entities.Message Message}
-	 * in the provided {@link net.dv8tion.jda.core.entities.MessageChannel MessageChannel}, starting
+	 * Begins pagination as a new {@link net.dv8tion.jda.api.entities.Message Message}
+	 * in the provided {@link net.dv8tion.jda.api.entities.MessageChannel MessageChannel}, starting
 	 * on whatever page number is provided.
 	 *
 	 * @param channel
@@ -157,7 +157,7 @@ public class PaginatorAutoStop extends Menu {
 
 	/**
 	 * Begins pagination displaying this Pagination by editing the provided
-	 * {@link net.dv8tion.jda.core.entities.Message Message}, starting on whatever
+	 * {@link net.dv8tion.jda.api.entities.Message Message}, starting on whatever
 	 * page number is provided.
 	 *
 	 * @param message
@@ -409,7 +409,7 @@ public class PaginatorAutoStop extends Menu {
 
 		/**
 		 * Sets the {@link java.awt.Color Color} of the
-		 * {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed}.
+		 * {@link net.dv8tion.jda.api.entities.MessageEmbed MessageEmbed}.
 		 *
 		 * @param color
 		 *            The Color of the MessageEmbed
@@ -423,7 +423,7 @@ public class PaginatorAutoStop extends Menu {
 
 		/**
 		 * Sets the {@link java.awt.Color Color} of the
-		 * {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed},
+		 * {@link net.dv8tion.jda.api.entities.MessageEmbed MessageEmbed},
 		 * relative to the total page number and the current page as determined by the provided
 		 * {@link java.util.function.BiFunction BiFunction}.
 		 * <br>
@@ -442,7 +442,7 @@ public class PaginatorAutoStop extends Menu {
 		}
 
 		/**
-		 * Sets the text of the {@link net.dv8tion.jda.core.entities.Message Message} to be
+		 * Sets the text of the {@link net.dv8tion.jda.api.entities.Message Message} to be
 		 * displayed
 		 * when the {@link com.jagrosh.jdautilities.menu.Paginator Paginator} is built.
 		 *
@@ -461,7 +461,7 @@ public class PaginatorAutoStop extends Menu {
 		}
 
 		/**
-		 * Sets the text of the {@link net.dv8tion.jda.core.entities.Message Message} to be
+		 * Sets the text of the {@link net.dv8tion.jda.api.entities.Message Message} to be
 		 * displayed
 		 * relative to the total page number and the current page as determined by the provided
 		 * {@link java.util.function.BiFunction BiFunction}.
@@ -662,7 +662,7 @@ public class PaginatorAutoStop extends Menu {
 		/**
 		 * Sets the {@link com.jagrosh.jdautilities.menu.Paginator Paginator} to traverse
 		 * left or right when a provided text input is sent in the form of a Message to
-		 * the {@link net.dv8tion.jda.core.entities.Channel Channel} the menu is displayed in.
+		 * the {@link net.dv8tion.jda.api.entities.Channel Channel} the menu is displayed in.
 		 *
 		 * <p>
 		 * If one or both these parameters are provided {@code null} this resets

@@ -20,33 +20,33 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import audio.GuildMusicManager;
 import audio.TrackScheduler;
 import commands.*;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.DisconnectEvent;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.ReconnectedEvent;
-import net.dv8tion.jda.core.events.ResumedEvent;
-import net.dv8tion.jda.core.events.ShutdownEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceDeafenEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.DisconnectEvent;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ReconnectedEvent;
+import net.dv8tion.jda.api.events.ResumedEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceDeafenEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import utils.CommonIDs;
 
 public class MottoBot extends ListenerAdapter {
 
-	public static final String MOTTO_VERSION = "180921-1";
+	public static final String MOTTO_VERSION = "190826-1";
 
 	public static MottoBot INSTANCE;
 
@@ -102,12 +102,12 @@ public class MottoBot extends ListenerAdapter {
 
 		JDABuilder builder = new JDABuilder(AccountType.BOT);
 		builder.setToken(token);
-		builder.setAudioEnabled(true);
+		//builder.setAudioEnabled(true);
 		builder.setStatus(OnlineStatus.INVISIBLE);
-		builder.setGame(Game.playing("Initialisation..."));
-		builder.addEventListener(this);
-		builder.addEventListener(this.commandClient);
-		builder.addEventListener(this.waiter);
+		builder.setActivity(Activity.playing("Initialisation..."));
+		builder.addEventListeners(this);
+		builder.addEventListeners(this.commandClient);
+		builder.addEventListeners(this.waiter);
 
 		try {
 			this.jda = builder.build().awaitReady();
@@ -200,7 +200,7 @@ public class MottoBot extends ListenerAdapter {
 
 	@Override
 	public void onDisconnect(DisconnectEvent event) {
-		System.err.println(event.getDisconnectTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE)) + "\tDéconnecté ! Tentative de reconnection...");
+		System.err.println(event.getTimeDisconnected().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE)) + "\tDéconnecté ! Tentative de reconnection...");
 	}
 
 	@Override
@@ -226,18 +226,18 @@ public class MottoBot extends ListenerAdapter {
 	}
 
     public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
-		VoiceChannel channel = event.getGuild().getAudioManager().getConnectedChannel();
+		VoiceChannel channel = event.getEntity().getGuild().getAudioManager().getConnectedChannel();
 		if(channel!=null) {
 			if(event.getChannelLeft().equals(channel)) {
 
 				if(!TrackScheduler.hasAtLeastOneListener(channel)) {
-			    	Long gID = event.getGuild().getIdLong();
+			    	Long gID = event.getEntity().getGuild().getIdLong();
 			    	GuildMusicManager gmm = this.musicManagers.get(gID);
 			    	if(gmm!=null) {
 			    		gmm.player.stopTrack();
 			    		gmm.scheduler.clearPlaylist();
 			    	}
-					event.getGuild().getAudioManager().closeAudioConnection();
+					event.getEntity().getGuild().getAudioManager().closeAudioConnection();
 				}
 			}
 		}
@@ -246,7 +246,7 @@ public class MottoBot extends ListenerAdapter {
     public void onGuildVoiceDeafen(GuildVoiceDeafenEvent event) {
 		VoiceChannel channel = event.getGuild().getAudioManager().getConnectedChannel();
 		if(channel!=null) {
-			if(event.getVoiceState().getAudioChannel().equals(channel)) {
+			if(event.getVoiceState().getChannel().equals(channel)) {
 
 				if(!TrackScheduler.hasAtLeastOneListener(channel)) {
 			    	Long gID = event.getGuild().getIdLong();
@@ -306,7 +306,7 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	public void setDefaultPresence() {
-		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Game.playing(CommandClient.COMMAND_PREFIX + "help"), true);
+		this.jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.playing(CommandClient.COMMAND_PREFIX + "help"), true);
 	}
 
 	public int clearChannelTab(TextChannel channel) {

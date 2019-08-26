@@ -143,6 +143,8 @@ public class PictureThread implements Runnable {
 					eb.setColor(SAFE);
 				}
 
+				eb.setDescription("Demandé par " + this.e.getMember().getEffectiveName());
+
 				if(fullImageUrl != null) {
 					if (fullImageUrl.startsWith("//")) {
 						fullImageUrl = "https:" + fullImageUrl;

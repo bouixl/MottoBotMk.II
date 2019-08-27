@@ -30,7 +30,8 @@ public class PictureThread implements Runnable {
 	public PictureThread(MessageReceivedEvent e, String args) {
 		this.rand = new Random();
 		this.e = e;
-		this.arguments = args.replace(" ", "+");
+		this.arguments = args.replace(" ", "+").toLowerCase();
+		this.arguments = args.replace("ademage", "nico_robin");
 	}
 
 	@Override

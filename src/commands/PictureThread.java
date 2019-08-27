@@ -1,7 +1,16 @@
 package commands;
 
 import java.awt.Color;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import org.jsoup.Jsoup;
@@ -21,6 +30,7 @@ public class PictureThread implements Runnable {
 	public static final Color EXPLICIT = new Color(255, 20, 147);
 	public static final Color SAFE = new Color(50, 205, 50);
 	public static final Color QUESTIONABLE = new Color(255, 165, 0);
+	public static final List<String> IMAGE_TYPES = Collections.unmodifiableList(Arrays.asList(".png", ".jpg", ".jpg", ".jpeg", ".gif", ".bmp"));
 
 	private Random rand;
 	private String arguments;
@@ -76,7 +86,7 @@ public class PictureThread implements Runnable {
 			}
 
 			try {
-				doc = Jsoup.connect(searchUrl) .ignoreHttpErrors(true).get();
+				doc = Jsoup.connect(searchUrl).ignoreHttpErrors(true).get();
 
 				if (selector==SANKAKU) {
 					//System.out.println("searchurl : "+searchUrl);
@@ -110,8 +120,8 @@ public class PictureThread implements Runnable {
 
 				if(pageUrl!=null) {
 					doc = Jsoup.connect(pageUrl).get();
-					fullImageUrl = doc.select("a.sample[id=image-link]").stream().findFirst().map(docs -> docs.attr("href").trim()).orElse(null);
-					imageUrl = doc.select("img[id=image]").stream().findFirst().map(docs -> docs.attr("src").trim()).orElse(null);
+					fullImageUrl = doc.select("a.sample[id=image-link]").stream().findFirst().map(docs -> docs.absUrl("href").trim()).orElse(null);
+					imageUrl = doc.select("img[id=image]").stream().findFirst().map(docs -> docs.absUrl("src").trim()).orElse(null);
 				}
 				else {
 					doc = null;
@@ -147,21 +157,39 @@ public class PictureThread implements Runnable {
 				eb.setDescription("Demandé par " + this.e.getMember().getEffectiveName());
 
 				if(fullImageUrl != null) {
-					if (fullImageUrl.startsWith("//")) {
-						fullImageUrl = "https:" + fullImageUrl;
-					}
-					System.out.println(this.e.getAuthor().getName() + " " + this.arguments +" : (full) " + fullImageUrl);
-					eb.setImage(fullImageUrl);
+					imageUrl = fullImageUrl;
+					System.out.println(this.e.getAuthor().getName() + " " + this.arguments +" : (full) " + imageUrl);
 				}
 				else {
-					if (imageUrl.startsWith("//")) {
-						imageUrl = "https:" + imageUrl;
-					}
 					System.out.println(this.e.getAuthor().getName() + " " + this.arguments +" : " + imageUrl);
-					eb.setImage(imageUrl);
 				}
 
-				this.e.getChannel().sendMessage(eb.build()).queue();
+
+				InputStream file;
+				String filename;
+				String filetype = ".png";
+
+				for(String ext : IMAGE_TYPES) {
+					if(imageUrl.contains(ext))
+					{
+						filetype = ext;
+						break;
+					}
+				}
+				filename = String.valueOf(rand.nextInt(2000000000))+filetype;
+				eb.setImage("attachment://"+filename);
+
+				try {
+			        HttpURLConnection httpcon = (HttpURLConnection) new URL(imageUrl).openConnection();
+			        httpcon.addRequestProperty("User-Agent", "Mozilla/4.0");
+					file = httpcon.getInputStream();
+					this.e.getChannel().sendFile(file, filename).embed(eb.build()).queue();
+				}
+				catch (IOException e1) {
+					this.e.getChannel().sendMessage("Erreur lors de la récupération de l'image :(").queue();
+					e1.printStackTrace();
+				}
+
 				break;
 			}
 			else {
@@ -179,4 +207,19 @@ public class PictureThread implements Runnable {
 		this.e.getChannel().sendMessage("Ce tag n'existe pas <@"+this.e.getAuthor().getId()+">").queue();
 	}
 
+    /*private static void getImage(String src, String filename) throws IOException {
+        URL url = new URL(src);
+
+        HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
+        httpcon.addRequestProperty("User-Agent", "Mozilla/4.0");
+        InputStream in = httpcon.getInputStream();
+
+        OutputStream out = new BufferedOutputStream(new FileOutputStream("mottoImages\\"+filename));
+
+        for (int b; (b = in.read()) != -1;) {
+            out.write(b);
+        }
+        out.close();
+        in.close();
+    }*/
 }

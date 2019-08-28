@@ -1,11 +1,8 @@
 package commands;
 
 import java.awt.Color;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -41,7 +38,7 @@ public class PictureThread implements Runnable {
 		this.rand = new Random();
 		this.e = e;
 		this.arguments = args.replace(" ", "+").toLowerCase();
-		this.arguments = args.replace("ademage", "nico_robin");
+		this.arguments = this.arguments.replace("ademage", "nico_robin");
 	}
 
 	@Override

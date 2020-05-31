@@ -26,7 +26,7 @@ public class CmdSetVolume extends Command {
 					newVol = 5;
 				}
 				gmm.player.setVolume(newVol);
-				event.getChannel().sendMessage(":gear: Mon volume de base est maintenant rÃ©glÃ© sur "+newVol+" !").queue();
+				event.getChannel().sendMessage(":gear: Mon volume de base est maintenant règlé sur "+newVol+" !").queue();
 			}
 			catch (Exception e) {
 				event.getChannel().sendMessage(":x: Merci de renseigner un nombre entier compris entre 5 et 80.").queue();

@@ -20,7 +20,6 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import audio.GuildMusicManager;
 import audio.TrackScheduler;
 import commands.*;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -100,17 +99,14 @@ public class MottoBot extends ListenerAdapter {
 		AudioSourceManagers.registerRemoteSources(this.playerManager);
 		this.musicManagers = new HashMap<>();
 
-		JDABuilder builder = new JDABuilder(AccountType.BOT);
-		builder.setToken(token);
-		//builder.setAudioEnabled(true);
-		builder.setStatus(OnlineStatus.INVISIBLE);
-		builder.setActivity(Activity.playing("Initialisation..."));
-		builder.addEventListeners(this);
-		builder.addEventListeners(this.commandClient);
-		builder.addEventListeners(this.waiter);
-
 		try {
-			this.jda = builder.build().awaitReady();
+			this.jda = JDABuilder.createDefault(token)
+					.addEventListeners(this)
+					.addEventListeners(this.commandClient)
+					.addEventListeners(this.waiter)
+					.setActivity(Activity.playing("Initialisation..."))
+					.build();
+			jda.awaitReady();
 		}
 		catch (LoginException | InterruptedException e) {
 			e.printStackTrace();

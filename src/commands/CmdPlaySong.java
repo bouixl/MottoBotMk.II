@@ -31,7 +31,7 @@ public class CmdPlaySong extends Command {
 
 		// Connection audio si necessaire
 		AudioManager audioManager = event.getGuild().getAudioManager();
-		if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect())
+		if (!audioManager.isConnected())
 			audioManager.openAudioConnection(voiceChannel);
 
 		// Chargement et lancement de la musique

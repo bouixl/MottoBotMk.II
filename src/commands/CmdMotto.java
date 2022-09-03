@@ -1,6 +1,7 @@
 package commands;
 
 import main.MottoBot;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdMotto extends Command{
@@ -14,6 +15,11 @@ public class CmdMotto extends Command{
 		(new Thread(new PictureThread(event, args))).start();
 		bot.addToClearTab(event.getMessage());
 
+	}
+
+	@Override
+	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+		event.reply("Ouais c'est compliqué, désolé (demandez à un dev de bosser bordel)").queue();
 	}
 
 }

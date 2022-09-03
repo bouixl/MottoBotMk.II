@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.MottoBot;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -30,12 +31,20 @@ public class CommandClient extends ListenerAdapter {
 			return;
 		if (event.getMessage().isWebhookMessage())
 			return;
-
+		
 		if (event.getMessage().getContentRaw().startsWith(COMMAND_PREFIX) && event.getMessage().getContentRaw().length() > 2)
 			this.lookForCommand(event);
 		else
 			this.lookForTrigger(event);
 	}
+	
+	@Override
+    public void onSlashCommand(SlashCommandEvent event)
+    {
+		if (event.getUser().isBot())
+			return;
+		this.lookForSlashCommand(event);
+    }
 
 	public void addCommand(Command c) {
 		this.registeredCommands.add(c);
@@ -61,6 +70,23 @@ public class CommandClient extends ListenerAdapter {
 		else {
 			event.getChannel().sendMessage("Erreur: Impossible de traiter la commande.").queue();
 		}
+	}
+	
+	private void lookForSlashCommand(SlashCommandEvent event) {
+		final Command command;
+		command = this.registeredCommands.stream().filter(cmd -> cmd.getAliases().contains(event.getName().toString())).findAny().orElse(null);
+		if (command != null) {
+			if(event.getOption("args") != null)
+			{
+				command.run(this.bot, event, event.getOption("args").getAsString());
+			}
+			else
+			{
+				command.run(this.bot, event, "");
+			}
+			//this.bot.addToClearTab(event.getMessage());
+		}
+
 	}
 
 	private void lookForTrigger(MessageReceivedEvent event) {

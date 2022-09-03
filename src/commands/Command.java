@@ -7,6 +7,7 @@ import main.MottoBot;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public abstract class Command {
@@ -165,6 +166,67 @@ public abstract class Command {
 		// All checks good, execute the command
 		this.execute(bot, event, args);
 	}
+	
+	public void run(MottoBot bot, SlashCommandEvent event, String args) {
+		if (event.getChannelType() == ChannelType.TEXT) // Guild Message
+		{
+			if (this.privateOnly) {
+				// Only available in PM
+				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: G_NO)").queue();
+				return;
+			}
+			if (this.blacklistedGuildIds != null && this.blacklistedGuildIds.contains(event.getGuild().getId())) {
+				// Guild is blacklisted for this command
+				return;
+			}
+			if (this.authorizedGuildIds != null && !this.authorizedGuildIds.isEmpty() && !this.authorizedGuildIds.contains(event.getGuild().getId())) {
+				// Guild is not whitelisted for this command
+				return;
+			}
+			if (this.permissionsRequired != null && !this.permissionsRequired.isEmpty()
+					&& (!event.getMember().getPermissions().contains(Permission.ADMINISTRATOR) || !event.getMember().getPermissions().containsAll(this.permissionsRequired))) {
+				// User doesn't have the required permissions to use that command.
+				event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)").queue();
+				return;
+			}
+			if (this.nsfw && !((TextChannel) event.getChannel()).isNSFW()) {
+				// Command is NSFW but channel is not
+				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: NSFW)").queue();
+				return;
+			}
+		}
+		else if (event.getChannelType() == ChannelType.PRIVATE) // Private Message
+		{
+			if (this.guildOnly) {
+				// Not available in PM
+				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: PM_NO)").queue();
+				return;
+			}
+			if (this.nsfw) {
+				// No NSFW in PM
+				return;
+			}
+		}
+		else // WTF
+		{
+			return;
+		}
+		/*
+		if (this.blacklistedUserIds != null && this.blacklistedUserIds.contains(event.getAuthor().getId())) {
+			// User is blacklisted for this command
+			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_BL)").queue();
+			return;
+		}*/
+		if (this.authorizedUserIds != null && !this.authorizedUserIds.isEmpty() && !this.authorizedUserIds.contains(event.getUser().getId())) {
+			// User is not whitelisted for this command
+			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: UID_WL)").queue();
+			return;
+		}
+
+		// All checks good, execute the command
+		this.execute(bot, event, args);
+	}
 
 	public abstract void execute(MottoBot bot, MessageReceivedEvent event, String args);
+	public abstract void execute(MottoBot bot, SlashCommandEvent event, String args);
 }

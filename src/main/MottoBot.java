@@ -41,11 +41,15 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import utils.CommonIDs;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 
 public class MottoBot extends ListenerAdapter {
 
-	public static final String MOTTO_VERSION = "190826-1";
+	public static final String MOTTO_VERSION = "4";
 
 	public static MottoBot INSTANCE;
 
@@ -122,6 +126,73 @@ public class MottoBot extends ListenerAdapter {
 		this.setDefaultPresence();
 		this.registerCommands();
 		this.registerTriggers();
+		
+		// These commands take up to an hour to be activated after creation/update/delete
+        CommandListUpdateAction commands = jda.updateCommands();
+
+        commands.addCommands(
+                new CommandData("motto","motto ?")
+                .addOptions(new OptionData(STRING, "args", "tags"))
+            );
+        
+        commands.addCommands(
+            new CommandData("help", "help command")
+        );
+        
+        commands.addCommands(
+                new CommandData("cleanup", "Clean bots commands from this channel")
+        );
+        
+        commands.addCommands(
+                new CommandData("ninja", "better cleanup :)")
+        );
+        
+        commands.addCommands(
+                new CommandData("voicekick", "A simple voice kick")
+                .addOptions(new OptionData(STRING, "args", "user").setRequired(true))
+        );
+        
+        commands.addCommands(
+                new CommandData("uptime", "Uptime")
+        );
+        
+        commands.addCommands(
+                new CommandData("version", "Version")
+        );
+        
+        commands.addCommands(
+                new CommandData("ping", "Pong")
+        );
+        
+        commands.addCommands(
+                new CommandData("mp", "Play music from youtube or URL")
+                .addOptions(new OptionData(STRING, "args", "nom de la recherche ou URL").setRequired(true))
+        );
+        
+        commands.addCommands(
+                new CommandData("ms", "Skip the current music")
+                .addOptions(new OptionData(STRING, "args", "number of music to skip"))
+        );
+        
+        commands.addCommands(
+                new CommandData("ml", "Leave the current voice channel")
+        );
+        
+        commands.addCommands(
+                new CommandData("pl", "Show the current playlist for this bot")
+        );
+        
+        commands.addCommands(
+                new CommandData("shuffle", "Shuffle the current playlist for this bot")
+        );
+        
+        commands.addCommands(
+                new CommandData("volume", "Change the volume for the bot")
+                .addOptions(new OptionData(STRING, "args", "volume between 5 and 80"))
+        );
+
+        // Send the new set of commands to discord, this will override any existing global commands with the new set provided here
+        commands.queue();
 	}
 
 	private void registerCommands() {
@@ -143,7 +214,7 @@ public class MottoBot extends ListenerAdapter {
 		this.commandClient.addCommand(new CmdPlaySong("play").addAliases("mottoplay", "mplay", "mp").setGuildOnly());
 		this.commandClient.addCommand(new CmdSkipSong("skip").addAliases("mottoskip", "mskip", "ms").setGuildOnly());
 		this.commandClient.addCommand(new CmdLeaveAudio("leave").addAliases("mottoleave", "mleave", "ml").setGuildOnly());
-		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl").setGuildOnly());
+		this.commandClient.addCommand(new CmdPlaylist("playlist").addAliases("mottoplaylist", "mplaylist", "mpl", "pl").setGuildOnly());
 		this.commandClient.addCommand(new CmdShufflePlaylist("shuffle").addAliases("mottoshuffle", "mshuffle").setGuildOnly());
 		this.commandClient.addCommand(new CmdSetVolume("volume").addAliases("mvolume","mottovolume").setGuildOnly().addRequiredPermission(Permission.VOICE_CONNECT).addRequiredPermission(Permission.VOICE_DEAF_OTHERS));
 	}

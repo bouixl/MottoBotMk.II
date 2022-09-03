@@ -41,6 +41,7 @@ public class PictureThread implements Runnable {
 		this.arguments = this.arguments.replace("ademage", "nico_robin");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		this.e.getChannel().sendTyping().queue();

@@ -2,6 +2,7 @@ package commands;
 
 import audio.GuildMusicManager;
 import main.MottoBot;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdSetVolume extends Command {
@@ -30,6 +31,31 @@ public class CmdSetVolume extends Command {
 			}
 			catch (Exception e) {
 				event.getChannel().sendMessage(":x: Merci de renseigner un nombre entier compris entre 5 et 80.").queue();
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
+		if(args == null || args.trim().isEmpty()) {
+			event.reply(":gear: Volume actuel: " + gmm.player.getVolume()).queue();
+		}
+		else {
+			try {
+				int newVol = Integer.valueOf(args);
+				if(newVol>80) {
+					newVol = 80;
+				}
+				else if(newVol<5) {
+					newVol = 5;
+				}
+				gmm.player.setVolume(newVol);
+				event.reply(":gear: Mon volume de base est maintenant réglé sur "+newVol+" !").queue();
+			}
+			catch (Exception e) {
+				event.reply(":x: Merci de renseigner un nombre entier compris entre 5 et 80.").queue();
 				e.printStackTrace();
 			}
 		}

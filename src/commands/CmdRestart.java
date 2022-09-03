@@ -3,6 +3,7 @@ package commands;
 import java.io.IOException;
 
 import main.MottoBot;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdRestart extends Command {
@@ -13,6 +14,19 @@ public class CmdRestart extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
+		try {
+			bot.shutdown();
+			ProcessBuilder pb = new ProcessBuilder("java", "-jar", "MottoBot.jar", bot.getToken(), "10");
+			pb.inheritIO();
+			pb.start();
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
 		try {
 			bot.shutdown();
 			ProcessBuilder pb = new ProcessBuilder("java", "-jar", "MottoBot.jar", bot.getToken(), "10");

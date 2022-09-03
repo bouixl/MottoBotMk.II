@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,16 @@ public class TrackScheduler extends AudioEventAdapter {
 			textChannel.sendMessage(":musical_score: \"" + track.getInfo().title + "\" ajouté à la file d'attente.").queue();
 		}
 	}
+	
+	public synchronized void queue(AudioTrack track, SlashCommandEvent event) {
+		if (!this.player.startTrack(track, true)) {
+			if (!this.queue.offer(track)) {
+				event.reply(":x: Ma playlist est trop remplie !").queue();
+				return;
+			}
+		}
+		event.reply(":musical_score: \"" + track.getInfo().title + "\" ajouté à la file d'attente.").queue();
+	}
 
 	public synchronized void queuePlayList(AudioPlaylist playlist, TextChannel textChannel) {
 		List<AudioTrack> list = playlist.getTracks();
@@ -74,6 +85,26 @@ public class TrackScheduler extends AudioEventAdapter {
 			}
 		}
 		textChannel.sendMessage(":musical_score: Playlist \"" + playlist.getName() + "\" ajoutée à la file d'attente.").queue();
+	}
+	
+	public synchronized void queuePlayList(AudioPlaylist playlist, SlashCommandEvent event) {
+		List<AudioTrack> list = playlist.getTracks();
+		if (list.size() == 0)
+			return;
+
+		if (!this.player.startTrack(list.get(0), true)) {
+			if (!this.queue.offer(list.get(0))) {
+				event.reply(":x: Ma playlist est trop remplie !").queue();
+				return;
+			}
+		}
+		for (int i = 1; i < list.size(); i++) {
+			if (!this.queue.offer(list.get(i))) {
+				event.reply(":x: Ma playlist est trop remplie(mais j'ai peut-être réussi à ajouter quelques titres) !").queue();
+				return;
+			}
+		}
+		event.reply(":musical_score: Playlist \"" + playlist.getName() + "\" ajoutée à la file d'attente.").queue();
 	}
 
 	public synchronized void nextTrack() {

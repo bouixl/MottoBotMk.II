@@ -8,6 +8,7 @@ import main.MottoBot;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdNinja extends Command {
@@ -60,5 +61,10 @@ public class CmdNinja extends Command {
 		else {
 			event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)").queue();
 		}
+	}
+
+	@Override
+	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+		event.reply("Message non supporté depuis les slashs commands").queue();
 	}
 }

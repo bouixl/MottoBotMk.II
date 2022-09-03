@@ -3,6 +3,7 @@ package commands;
 import main.MottoBot;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdKickFromVocal extends Command {
@@ -27,5 +28,10 @@ public class CmdKickFromVocal extends Command {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+		event.reply("Message non supporté depuis les slashs commands").queue();
 	}
 }

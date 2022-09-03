@@ -3,6 +3,7 @@ package commands;
 import java.time.temporal.ChronoUnit;
 
 import main.MottoBot;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdPing extends Command {
@@ -16,5 +17,10 @@ public class CmdPing extends Command {
 		event.getChannel().sendMessage("dé-aisse-elle mec, mais t'as cru que j'allais t'envoyer pong ? pédé va.").queue(m -> {
             m.editMessage("dé-aisse-elle mec, mais t'as cru que j'allais t'envoyer pong ? pédé va. ("+event.getMessage().getTimeCreated().until(m.getTimeCreated(), ChronoUnit.MILLIS)+"ms)").queue();
         });
+	}
+
+	@Override
+	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+		event.reply("pong").queue();
 	}
 }

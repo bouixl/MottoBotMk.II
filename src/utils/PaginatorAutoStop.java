@@ -330,6 +330,7 @@ public class PaginatorAutoStop extends Menu {
 		message.editMessage(this.renderPage(newPageNum)).queue(m -> this.pagination(m, n));
 	}
 
+	@SuppressWarnings("deprecation")
 	private Message renderPage(int pageNum) {
 		MessageBuilder mbuilder = new MessageBuilder();
 		EmbedBuilder ebuilder = new EmbedBuilder();

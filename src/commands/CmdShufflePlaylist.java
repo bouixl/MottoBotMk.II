@@ -2,11 +2,13 @@ package commands;
 
 import java.util.concurrent.TimeUnit;
 
+import com.jagrosh.jdautilities.menu.Paginator;
+
 import audio.GuildMusicManager;
 import main.MottoBot;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import utils.PaginatorAutoStop;
 
 public class CmdShufflePlaylist extends Command {
 
@@ -16,19 +18,19 @@ public class CmdShufflePlaylist extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if (!event.getMember().getVoiceState().inVoiceChannel()) {
+		if (!event.getMember().getVoiceState().inAudioChannel()) {
 			event.getChannel().sendMessage(":x: Vous devez être dans un canal vocal pour ça.").queue();
 			return;
 		}
 
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		gmm.scheduler.shufflePlaylist();
-		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
+		gmm.scheduler.setActiveTextChannel((TextChannel) event.getChannel());
 
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
 		if (titles.length > 0) {
-			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
+			Paginator.Builder pgBuilder = new Paginator.Builder();
 			pgBuilder.setText(":musical_score: Nouvelle playlist: ");
 			pgBuilder.useNumberedItems(true);
 			pgBuilder.setItems(titles);
@@ -37,7 +39,7 @@ public class CmdShufflePlaylist extends Command {
 			pgBuilder.setEventWaiter(bot.getWaiter());
 			pgBuilder.setTimeout(3, TimeUnit.MINUTES);
 			pgBuilder.waitOnSinglePage(true);
-			PaginatorAutoStop pg = pgBuilder.build();
+			Paginator pg = pgBuilder.build();
 
 			pg.display(event.getChannel());
 		}
@@ -47,20 +49,20 @@ public class CmdShufflePlaylist extends Command {
 	}
 
 	@Override
-	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
-		if (!event.getMember().getVoiceState().inVoiceChannel()) {
+	public void execute(MottoBot bot, SlashCommandInteractionEvent event, String args) {
+		if (!event.getMember().getVoiceState().inAudioChannel()) {
 			event.reply(":x: Vous devez être dans un canal vocal pour ça.").queue();
 			return;
 		}
 
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		gmm.scheduler.shufflePlaylist();
-		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
+		gmm.scheduler.setActiveTextChannel((TextChannel) event.getChannel());
 
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
 		if (titles.length > 0) {
-			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
+			Paginator.Builder pgBuilder = new Paginator.Builder();
 			pgBuilder.setText(":musical_score: Nouvelle playlist: ");
 			pgBuilder.useNumberedItems(true);
 			pgBuilder.setItems(titles);
@@ -69,7 +71,7 @@ public class CmdShufflePlaylist extends Command {
 			pgBuilder.setEventWaiter(bot.getWaiter());
 			pgBuilder.setTimeout(3, TimeUnit.MINUTES);
 			pgBuilder.waitOnSinglePage(true);
-			PaginatorAutoStop pg = pgBuilder.build();
+			Paginator pg = pgBuilder.build();
 
 			pg.display(event.getChannel());
 			event.reply("Ok!").setEphemeral(true).queue();

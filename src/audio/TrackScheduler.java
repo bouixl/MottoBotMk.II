@@ -9,9 +9,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +30,7 @@ public class TrackScheduler extends AudioEventAdapter {
 	private final AudioPlayer				player;
 	private final Guild						guild;
 	private final BlockingQueue<AudioTrack>	queue;
-	private TextChannel						activeTextChannel;
+	private TextChannel					activeTextChannel;
 
 	/**
 	 * @param player
@@ -57,7 +57,7 @@ public class TrackScheduler extends AudioEventAdapter {
 		}
 	}
 	
-	public synchronized void queue(AudioTrack track, SlashCommandEvent event) {
+	public synchronized void queue(AudioTrack track, SlashCommandInteractionEvent event) {
 		if (!this.player.startTrack(track, true)) {
 			if (!this.queue.offer(track)) {
 				event.reply(":x: Ma playlist est trop remplie !").queue();
@@ -87,7 +87,7 @@ public class TrackScheduler extends AudioEventAdapter {
 		textChannel.sendMessage(":musical_score: Playlist \"" + playlist.getName() + "\" ajoutée à la file d'attente.").queue();
 	}
 	
-	public synchronized void queuePlayList(AudioPlaylist playlist, SlashCommandEvent event) {
+	public synchronized void queuePlayList(AudioPlaylist playlist, SlashCommandInteractionEvent event) {
 		List<AudioTrack> list = playlist.getTracks();
 		if (list.size() == 0)
 			return;
@@ -162,7 +162,7 @@ public class TrackScheduler extends AudioEventAdapter {
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 		if (endReason.mayStartNext) {
 			// Inutile de jouer pour personne
-			VoiceChannel voiceChannel = this.guild.getAudioManager().getConnectedChannel();
+			VoiceChannel voiceChannel = (VoiceChannel) this.guild.getAudioManager().getConnectedChannel();
 			if(voiceChannel!=null && hasAtLeastOneListener(voiceChannel)) {
 				this.nextTrack();
 			}
@@ -198,4 +198,5 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		return false;
 	}
+
 }

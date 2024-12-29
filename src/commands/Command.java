@@ -5,9 +5,9 @@ import java.util.List;
 
 import main.MottoBot;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public abstract class Command {
@@ -130,7 +130,7 @@ public abstract class Command {
 				event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)").queue();
 				return;
 			}
-			if (this.nsfw && !((TextChannel) event.getChannel()).isNSFW()) {
+			if (this.nsfw && !(((TextChannel) event.getChannel()).isNSFW())) {
 				// Command is NSFW but channel is not
 				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: NSFW)").queue();
 				return;
@@ -167,7 +167,7 @@ public abstract class Command {
 		this.execute(bot, event, args);
 	}
 	
-	public void run(MottoBot bot, SlashCommandEvent event, String args) {
+	public void run(MottoBot bot, SlashCommandInteractionEvent event, String args) {
 		if (event.getChannelType() == ChannelType.TEXT) // Guild Message
 		{
 			if (this.privateOnly) {
@@ -189,7 +189,7 @@ public abstract class Command {
 				event.getChannel().sendMessage(":x: Vous n'avez pas la permission d'utiliser cette commande. (Err: PERM)").queue();
 				return;
 			}
-			if (this.nsfw && !((TextChannel) event.getChannel()).isNSFW()) {
+			if (this.nsfw && !(((TextChannel)event.getChannel()).isNSFW())) {
 				// Command is NSFW but channel is not
 				event.getChannel().sendMessage(":x: Cette commande ne peut pas être utilisée ici. (Err: NSFW)").queue();
 				return;
@@ -228,5 +228,5 @@ public abstract class Command {
 	}
 
 	public abstract void execute(MottoBot bot, MessageReceivedEvent event, String args);
-	public abstract void execute(MottoBot bot, SlashCommandEvent event, String args);
+	public abstract void execute(MottoBot bot, SlashCommandInteractionEvent event, String args);
 }

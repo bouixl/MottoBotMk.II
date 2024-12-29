@@ -1,7 +1,8 @@
 package commands;
 
+
 import main.MottoBot;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdSkipSong extends Command {
@@ -12,7 +13,7 @@ public class CmdSkipSong extends Command {
 
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if (event.getMember().getVoiceState().inVoiceChannel()) {
+		if (event.getMember().getVoiceState().inAudioChannel()) {
 			int nbOfSkips = 1;
 			try {
 				if (args != null)
@@ -30,8 +31,8 @@ public class CmdSkipSong extends Command {
 	}
 
 	@Override
-	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
-		if (event.getMember().getVoiceState().inVoiceChannel()) {
+	public void execute(MottoBot bot, SlashCommandInteractionEvent event, String args) {
+		if (event.getMember().getVoiceState().inAudioChannel()) {
 			int nbOfSkips = 1;
 			try {
 				if (args != null)

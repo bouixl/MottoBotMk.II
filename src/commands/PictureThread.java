@@ -15,7 +15,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 public class PictureThread implements Runnable {
 
@@ -41,11 +43,10 @@ public class PictureThread implements Runnable {
 		this.arguments = this.arguments.replace("ademage", "nico_robin");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		this.e.getChannel().sendTyping().queue();
-		boolean channelIsNSFW = this.e.getChannel().getName().toLowerCase().contains("nsfw") || this.e.getTextChannel().isNSFW();
+		boolean channelIsNSFW = this.e.getChannel().getName().toLowerCase().contains("nsfw") || ((TextChannel)this.e.getChannel()).isNSFW();
 
 		int selector = this.rand.nextInt(MAX_TRIES);
 		int nbRecherche = 0;
@@ -181,7 +182,7 @@ public class PictureThread implements Runnable {
 			        HttpURLConnection httpcon = (HttpURLConnection) new URL(imageUrl).openConnection();
 			        httpcon.addRequestProperty("User-Agent", "Mozilla/4.0");
 					file = httpcon.getInputStream();
-					this.e.getChannel().sendFile(file, filename).embed(eb.build()).queue();
+					((TextChannel) this.e.getChannel()).sendFiles(FileUpload.fromData(file, filename)).queue();
 				}
 				catch (IOException e1) {
 					this.e.getChannel().sendMessage("Erreur lors de la récupération de l'image :(").queue();

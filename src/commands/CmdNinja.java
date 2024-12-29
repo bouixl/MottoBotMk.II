@@ -8,7 +8,8 @@ import main.MottoBot;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdNinja extends Command {
@@ -18,7 +19,7 @@ public class CmdNinja extends Command {
 	}
 
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
-		if(event.getMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_MANAGE))
+		if(event.getMember().hasPermission((TextChannel) event.getChannel(), Permission.MESSAGE_MANAGE))
 		{
 			OffsetDateTime oldest = event.getMessage().getTimeCreated();
 			OffsetDateTime twoDaysAgo = OffsetDateTime.now();
@@ -46,7 +47,7 @@ public class CmdNinja extends Command {
 					System.out.println("J'ai supprimé " + mbot.size() + " messages.");
 				}
 				else if(mbot.size()==1) {
-					event.getTextChannel().deleteMessageById(mbot.get(0)).queue();
+					((TextChannel) event.getChannel()).deleteMessageById(mbot.get(0)).queue();
 					System.out.println("J'ai supprimé 1 message.");
 				}
 				else {
@@ -64,7 +65,7 @@ public class CmdNinja extends Command {
 	}
 
 	@Override
-	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+	public void execute(MottoBot bot, SlashCommandInteractionEvent event, String args) {
 		event.reply("Message non supporté depuis les slashs commands").queue();
 	}
 }

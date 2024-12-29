@@ -5,8 +5,8 @@ import java.util.List;
 
 import main.MottoBot;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public abstract class Trigger {
@@ -93,7 +93,7 @@ public abstract class Trigger {
 				// User doesn't have the required permissions for this trigger
 				return;
 			}
-			if (this.nsfw && !((TextChannel) event.getChannel()).isNSFW()) {
+			if (this.nsfw && !(((TextChannel)event.getChannel()).isNSFW())) {
 				// Trigger is NSFW but channel is not
 				return;
 			}

@@ -8,8 +8,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import audio.GuildMusicManager;
 import main.MottoBot;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
@@ -24,7 +25,7 @@ public class CmdPlaySong extends Command {
 		if(args == null || args.trim().isEmpty())
 			return;
 
-		VoiceChannel voiceChannel = event.getMember().getVoiceState().getChannel();
+		VoiceChannel voiceChannel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
 		if (voiceChannel == null) {
 			event.getChannel().sendMessage(":x: Vous devez être dans un canal vocal pour ça.").queue();
 			return;
@@ -37,22 +38,22 @@ public class CmdPlaySong extends Command {
 
 		// Chargement et lancement de la musique
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
-		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
+		gmm.scheduler.setActiveTextChannel((TextChannel) event.getChannel());
 		bot.getPlayerManager().loadItemOrdered(gmm.player, args, new AudioLoadResultHandler() {
 
 			@Override
 			public void trackLoaded(AudioTrack track) {
-				gmm.scheduler.queue(track, event.getTextChannel());
+				gmm.scheduler.queue(track, (TextChannel) event.getChannel());
 			}
 
 			@Override
 			public void playlistLoaded(AudioPlaylist playlist) {
 				if (args.startsWith("ytsearch:")) {
 					// On récupère un seul résultat de recherche
-					gmm.scheduler.queue(playlist.getTracks().get(0), event.getTextChannel());
+					gmm.scheduler.queue(playlist.getTracks().get(0), (TextChannel) event.getChannel());
 				}
 				else {
-					gmm.scheduler.queuePlayList(playlist, event.getTextChannel());
+					gmm.scheduler.queuePlayList(playlist, (TextChannel) event.getChannel());
 				}
 			}
 
@@ -64,12 +65,12 @@ public class CmdPlaySong extends Command {
 
 					@Override
 					public void trackLoaded(AudioTrack track) {
-						gmm.scheduler.queue(track, event.getTextChannel());
+						gmm.scheduler.queue(track, (TextChannel) event.getChannel());
 					}
 
 					@Override
 					public void playlistLoaded(AudioPlaylist playlist) {
-						gmm.scheduler.queue(playlist.getTracks().get(0), event.getTextChannel());
+						gmm.scheduler.queue(playlist.getTracks().get(0), (TextChannel) event.getChannel());
 					}
 
 					@Override
@@ -102,11 +103,11 @@ public class CmdPlaySong extends Command {
 	}
 
 	@Override
-	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+	public void execute(MottoBot bot, SlashCommandInteractionEvent event, String args) {
 		if(args == null || args.trim().isEmpty())
 			return;
 
-		VoiceChannel voiceChannel = event.getMember().getVoiceState().getChannel();
+		VoiceChannel voiceChannel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
 		if (voiceChannel == null) {
 			event.reply(":x: Vous devez être dans un canal vocal pour ça.").queue();
 			return;
@@ -119,7 +120,7 @@ public class CmdPlaySong extends Command {
 
 		// Chargement et lancement de la musique
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
-		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
+		gmm.scheduler.setActiveTextChannel((TextChannel) event.getChannel());
 		bot.getPlayerManager().loadItemOrdered(gmm.player, args, new AudioLoadResultHandler() {
 
 			@Override

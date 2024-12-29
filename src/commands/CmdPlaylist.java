@@ -2,11 +2,13 @@ package commands;
 
 import java.util.concurrent.TimeUnit;
 
+import com.jagrosh.jdautilities.menu.Paginator;
+
 import audio.GuildMusicManager;
 import main.MottoBot;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import utils.PaginatorAutoStop;
 
 public class CmdPlaylist extends Command {
 
@@ -17,11 +19,11 @@ public class CmdPlaylist extends Command {
 	@Override
 	public void execute(MottoBot bot, MessageReceivedEvent event, String args) {
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
-		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
+		gmm.scheduler.setActiveTextChannel((TextChannel) event.getChannel());
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
 		if (titles.length > 0) {
-			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
+			Paginator.Builder pgBuilder = new Paginator.Builder();
 			pgBuilder.setText(":musical_score: Playlist: ");
 			pgBuilder.useNumberedItems(true);
 			pgBuilder.setItems(titles);
@@ -30,7 +32,7 @@ public class CmdPlaylist extends Command {
 			pgBuilder.setEventWaiter(bot.getWaiter());
 			pgBuilder.setTimeout(3, TimeUnit.MINUTES);
 			pgBuilder.waitOnSinglePage(true);
-			PaginatorAutoStop pg = pgBuilder.build();
+			Paginator pg = pgBuilder.build();
 
 			pg.display(event.getChannel());
 		}
@@ -40,13 +42,13 @@ public class CmdPlaylist extends Command {
 	}
 
 	@Override
-	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+	public void execute(MottoBot bot, SlashCommandInteractionEvent event, String args) {
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
-		gmm.scheduler.setActiveTextChannel(event.getTextChannel());
+		gmm.scheduler.setActiveTextChannel((TextChannel) event.getChannel());
 		String[] titles = gmm.scheduler.getPlaylist().toArray(new String[0]);
 
 		if (titles.length > 0) {
-			PaginatorAutoStop.Builder pgBuilder = new PaginatorAutoStop.Builder();
+			Paginator.Builder pgBuilder = new Paginator.Builder();
 			pgBuilder.setText(":musical_score: Playlist: ");
 			pgBuilder.useNumberedItems(true);
 			pgBuilder.setItems(titles);
@@ -55,7 +57,7 @@ public class CmdPlaylist extends Command {
 			pgBuilder.setEventWaiter(bot.getWaiter());
 			pgBuilder.setTimeout(3, TimeUnit.MINUTES);
 			pgBuilder.waitOnSinglePage(true);
-			PaginatorAutoStop pg = pgBuilder.build();
+			Paginator pg = pgBuilder.build();
 
 			pg.display(event.getChannel());
 			event.reply("Ok!").setEphemeral(true).queue();

@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.MottoBot;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -39,7 +39,7 @@ public class CommandClient extends ListenerAdapter {
 	}
 	
 	@Override
-    public void onSlashCommand(SlashCommandEvent event)
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
     {
 		if (event.getUser().isBot())
 			return;
@@ -72,7 +72,7 @@ public class CommandClient extends ListenerAdapter {
 		}
 	}
 	
-	private void lookForSlashCommand(SlashCommandEvent event) {
+	private void lookForSlashCommand(SlashCommandInteractionEvent event) {
 		final Command command;
 		command = this.registeredCommands.stream().filter(cmd -> cmd.getAliases().contains(event.getName().toString())).findAny().orElse(null);
 		if (command != null) {

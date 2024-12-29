@@ -2,7 +2,7 @@ package commands;
 
 import audio.GuildMusicManager;
 import main.MottoBot;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CmdSetVolume extends Command {
@@ -37,7 +37,7 @@ public class CmdSetVolume extends Command {
 	}
 
 	@Override
-	public void execute(MottoBot bot, SlashCommandEvent event, String args) {
+	public void execute(MottoBot bot, SlashCommandInteractionEvent event, String args) {
 		GuildMusicManager gmm = bot.getGuildMusicManager(event.getGuild());
 		if(args == null || args.trim().isEmpty()) {
 			event.reply(":gear: Volume actuel: " + gmm.player.getVolume()).queue();

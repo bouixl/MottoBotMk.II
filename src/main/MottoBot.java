@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.security.auth.login.LoginException;
-
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -20,36 +18,42 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import audio.GuildMusicManager;
 import audio.TrackScheduler;
 import commands.*;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.AndroidMusic;
+import dev.lavalink.youtube.clients.Music;
+import dev.lavalink.youtube.clients.Tv;
+import dev.lavalink.youtube.clients.TvHtml5Embedded;
+import dev.lavalink.youtube.clients.Web;
+import dev.lavalink.youtube.clients.WebEmbedded;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.DisconnectEvent;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ReconnectedEvent;
-import net.dv8tion.jda.api.events.ResumedEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceDeafenEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.SessionDisconnectEvent;
+import net.dv8tion.jda.api.events.session.SessionResumeEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import utils.CommonIDs;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 
 public class MottoBot extends ListenerAdapter {
 
-	public static final String MOTTO_VERSION = "4";
+	public static final String MOTTO_VERSION = "5";
 
 	public static MottoBot INSTANCE;
 
@@ -98,13 +102,26 @@ public class MottoBot extends ListenerAdapter {
 
 		this.commandClient = new CommandClient(this);
 		this.waiter = new EventWaiter();
-
+		
 		this.playerManager = new DefaultAudioPlayerManager();
+		YoutubeAudioSourceManager ytSourceManager = new YoutubeAudioSourceManager(
+	            /*allowSearch:*/ true,
+	            new Music(),
+	            new Web(),
+	            new TvHtml5Embedded(),
+	            new AndroidMusic(),
+	            new WebEmbedded(),
+	            new Tv());
+		ytSourceManager.useOauth2("1//03ECv_fHXN7oaCgYIARAAGAMSNwF-L9Ir0kxEBnVIr1IO9kJpBAw49_pdSV3kaEOYJffeY0qAFIkYdkpGeejQ1GtyGbLlQ_YVGEc", true);
+		//ytSourceManager.useOauth2(null, false);
+		this.playerManager.registerSourceManager(ytSourceManager);
 		AudioSourceManagers.registerRemoteSources(this.playerManager);
 		this.musicManagers = new HashMap<>();
 
 		try {
 			this.jda = JDABuilder.createDefault(token)
+					.enableIntents(GatewayIntent.GUILD_MEMBERS)
+					.enableIntents(GatewayIntent.MESSAGE_CONTENT)
 					.addEventListeners(this)
 					.addEventListeners(this.commandClient)
 					.addEventListeners(this.waiter)
@@ -112,7 +129,7 @@ public class MottoBot extends ListenerAdapter {
 					.build();
 			jda.awaitReady();
 		}
-		catch (LoginException | InterruptedException e) {
+		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
@@ -129,65 +146,65 @@ public class MottoBot extends ListenerAdapter {
 		
 		// These commands take up to an hour to be activated after creation/update/delete
         CommandListUpdateAction commands = jda.updateCommands();
-
+        
         commands.addCommands(
-                new CommandData("motto","motto ?")
+                new CommandDataImpl("motto","motto ?")
                 .addOptions(new OptionData(STRING, "args", "tags"))
             );
         
         commands.addCommands(
-            new CommandData("help", "help command")
+            new CommandDataImpl("help", "help command")
         );
         
         commands.addCommands(
-                new CommandData("cleanup", "Clean bots commands from this channel")
+                new CommandDataImpl("cleanup", "Clean bots commands from this channel")
         );
         
         commands.addCommands(
-                new CommandData("ninja", "better cleanup :)")
+                new CommandDataImpl("ninja", "better cleanup :)")
         );
         
         commands.addCommands(
-                new CommandData("voicekick", "A simple voice kick")
+                new CommandDataImpl("voicekick", "A simple voice kick")
                 .addOptions(new OptionData(STRING, "args", "user").setRequired(true))
         );
         
         commands.addCommands(
-                new CommandData("uptime", "Uptime")
+                new CommandDataImpl("uptime", "Uptime")
         );
         
         commands.addCommands(
-                new CommandData("version", "Version")
+                new CommandDataImpl("version", "Version")
         );
         
         commands.addCommands(
-                new CommandData("ping", "Pong")
+                new CommandDataImpl("ping", "Pong")
         );
         
         commands.addCommands(
-                new CommandData("mp", "Play music from youtube or URL")
+                new CommandDataImpl("mp", "Play music from youtube or URL")
                 .addOptions(new OptionData(STRING, "args", "nom de la recherche ou URL").setRequired(true))
         );
         
         commands.addCommands(
-                new CommandData("ms", "Skip the current music")
+                new CommandDataImpl("ms", "Skip the current music")
                 .addOptions(new OptionData(STRING, "args", "number of music to skip"))
         );
         
         commands.addCommands(
-                new CommandData("ml", "Leave the current voice channel")
+                new CommandDataImpl("ml", "Leave the current voice channel")
         );
         
         commands.addCommands(
-                new CommandData("pl", "Show the current playlist for this bot")
+                new CommandDataImpl("pl", "Show the current playlist for this bot")
         );
         
         commands.addCommands(
-                new CommandData("shuffle", "Shuffle the current playlist for this bot")
+                new CommandDataImpl("shuffle", "Shuffle the current playlist for this bot")
         );
         
         commands.addCommands(
-                new CommandData("volume", "Change the volume for the bot")
+                new CommandDataImpl("volume", "Change the volume for the bot")
                 .addOptions(new OptionData(STRING, "args", "volume between 5 and 80"))
         );
 
@@ -205,7 +222,8 @@ public class MottoBot extends ListenerAdapter {
 
 		this.commandClient.addCommand(new CmdCleanUp("cleanup").addAliases("clear","mottoclear","mclear","clean","mclean","mottoclean").setGuildOnly().addRequiredPermission(Permission.MESSAGE_MANAGE));
 		this.commandClient.addCommand(new CmdNinja("ninja").addAliases("mottoninja","mninja").setGuildOnly().addRequiredPermission(Permission.ADMINISTRATOR));
-		this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
+		// plus besoin de cette commande (flemme de mettre a jour, trop la galere)
+		//this.commandClient.addCommand(new CmdKickFromVocal("voicekick").addAlias("vkick").setGuildOnly().addRequiredPermission(Permission.VOICE_MOVE_OTHERS));
 
 		this.commandClient.addCommand(new CmdUptime("uptime").addAliases("muptime", "mottouptime"));
 		this.commandClient.addCommand(new CmdVersion("version").addAliases("mversion", "mottoversion"));
@@ -266,19 +284,20 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onDisconnect(DisconnectEvent event) {
+	public void onSessionDisconnect(SessionDisconnectEvent event) {
 		System.err.println(event.getTimeDisconnected().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.FRANCE)) + "\tDéconnecté ! Tentative de reconnection...");
 	}
 
 	@Override
-	public void onResume(ResumedEvent event) {
+	public void onSessionResume(SessionResumeEvent event) {
 		System.err.println(timestamp() + "Connection rétablie ! Aucun event perdu.");
 	}
 
+	/*
 	@Override
 	public void onReconnect(ReconnectedEvent event) {
 		System.err.println(timestamp() + "Reconnecté ! Peut-être que certains events n'ont pas été traités...");
-	}
+	}*/
 
 	@Override
 	public void onShutdown(ShutdownEvent event) {
@@ -286,14 +305,14 @@ public class MottoBot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+	public void onMessageReceived(MessageReceivedEvent event) {
 		if(event.getAuthor().equals(this.jda.getSelfUser())) {
 			this.addToClearTab(event.getMessage());
 		}
 	}
 
     public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
-		VoiceChannel channel = event.getEntity().getGuild().getAudioManager().getConnectedChannel();
+		VoiceChannel channel = (VoiceChannel) event.getEntity().getGuild().getAudioManager().getConnectedChannel();
 		if(channel!=null) {
 			if(event.getChannelLeft().equals(channel)) {
 
@@ -311,7 +330,7 @@ public class MottoBot extends ListenerAdapter {
     }
 
     public void onGuildVoiceDeafen(GuildVoiceDeafenEvent event) {
-		VoiceChannel channel = event.getGuild().getAudioManager().getConnectedChannel();
+    	VoiceChannel channel = (VoiceChannel) event.getGuild().getAudioManager().getConnectedChannel();
 		if(channel!=null) {
 			if(event.getVoiceState().getChannel().equals(channel)) {
 

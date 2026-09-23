@@ -17,18 +17,25 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import audio.GuildMusicManager;
 import audio.TrackScheduler;
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import commands.*;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.AndroidMusic;
+import dev.lavalink.youtube.clients.Ios;
+import dev.lavalink.youtube.clients.MWeb;
 import dev.lavalink.youtube.clients.Music;
+import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.Tv;
-import dev.lavalink.youtube.clients.TvHtml5Embedded;
+import dev.lavalink.youtube.clients.TvHtml5Simply;
 import dev.lavalink.youtube.clients.Web;
 import dev.lavalink.youtube.clients.WebEmbedded;
+import dev.lavalink.youtube.clients.WebWithThumbnail;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
+import net.dv8tion.jda.api.audio.dave.DaveSessionFactory;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -106,11 +113,6 @@ public class MottoBot extends ListenerAdapter {
 		this.playerManager = new DefaultAudioPlayerManager();
 		YoutubeAudioSourceManager ytSourceManager = new YoutubeAudioSourceManager(
 	            /*allowSearch:*/ true,
-	            new Music(),
-	            new Web(),
-	            new TvHtml5Embedded(),
-	            new AndroidMusic(),
-	            new WebEmbedded(),
 	            new Tv());
 		ytSourceManager.useOauth2("1//03ECv_fHXN7oaCgYIARAAGAMSNwF-L9Ir0kxEBnVIr1IO9kJpBAw49_pdSV3kaEOYJffeY0qAFIkYdkpGeejQ1GtyGbLlQ_YVGEc", true);
 		//ytSourceManager.useOauth2(null, false);
@@ -118,8 +120,13 @@ public class MottoBot extends ListenerAdapter {
 		AudioSourceManagers.registerRemoteSources(this.playerManager);
 		this.musicManagers = new HashMap<>();
 
+
+		DaveSessionFactory daveSessionFactory = new JDaveSessionFactory();
+		
 		try {
 			this.jda = JDABuilder.createDefault(token)
+					.setAudioModuleConfig(new AudioModuleConfig()
+							.withDaveSessionFactory(daveSessionFactory))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.enableIntents(GatewayIntent.MESSAGE_CONTENT)
 					.addEventListeners(this)
